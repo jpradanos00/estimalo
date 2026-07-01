@@ -127,11 +127,11 @@ export function Landing() {
     <div className="flex-1 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md text-center motion-safe:animate-fade-in">
         <div className="mb-8">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/25 motion-safe:animate-float">
-            <span className="text-4xl" role="img" aria-label="Planning Poker card">🃏</span>
+          <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/25">
+            <span className="text-3xl font-extrabold text-white">E</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-            estímalo
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white mb-1">
+            Estímalo
           </h1>
           <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 tracking-wide">
             {t.app.subtitle}

@@ -258,6 +258,24 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, [session?.current_task_id, session?.status, subscribeToVotes]);
 
+  // Auto-reset session to lobby if current task is stale (completed or deleted)
+  useEffect(() => {
+    if (
+      session &&
+      (session.status === 'voting' || session.status === 'revealed') &&
+      session.current_task_id
+    ) {
+      const task = tasks.find((t) => t.id === session.current_task_id);
+      if (!task || task.status === 'completed') {
+        supabase
+          .from('sessions')
+          .update({ status: 'lobby', current_task_id: null })
+          .eq('id', session.id)
+          .then(() => {});
+      }
+    }
+  }, [session?.current_task_id, session?.status, tasks]);
+
   const createSession = useCallback(
     async (adminName: string, sessionName?: string): Promise<string> => {
       setLoading(true);

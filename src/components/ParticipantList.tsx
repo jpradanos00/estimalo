@@ -1,4 +1,4 @@
-import { useState, memo, useCallback } from 'react';
+import { useState, memo, useCallback, useEffect, useRef } from 'react';
 import { useI18n } from '../hooks/useI18n';
 import { useSession } from '../hooks/useSession';
 import { Card } from './ui/Card';
@@ -107,17 +107,29 @@ export function ParticipantList() {
   const { t } = useI18n();
   const { participants, myParticipant, isAdmin, updateWeight, removeParticipant } = useSession();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const listRef = useRef<HTMLUListElement>(null);
 
   const handleToggleEdit = useCallback((id: string | null) => {
     setEditingId(id);
   }, []);
+
+  useEffect(() => {
+    if (!editingId) return;
+    const handler = (e: MouseEvent) => {
+      if (listRef.current && !listRef.current.contains(e.target as Node)) {
+        setEditingId(null);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [editingId]);
 
   return (
     <Card>
       <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-4">
         {t.lobby.participants} ({participants.length})
       </h3>
-      <ul className="space-y-0.5" role="list">
+      <ul ref={listRef} className="space-y-0.5" role="list">
         {participants.map((p) => (
           <ParticipantRow
             key={p.id}

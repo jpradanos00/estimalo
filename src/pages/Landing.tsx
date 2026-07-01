@@ -64,7 +64,14 @@ export function Landing() {
   };
 
   useEffect(() => {
-    const handler = () => setScreen('main');
+    const handler = () => {
+      const hash = window.location.hash.replace('#', '') as LandingScreen;
+      if (hash && ['create', 'join', 'auth', 'mysessions'].includes(hash)) {
+        setScreen(hash);
+      } else {
+        setScreen('main');
+      }
+    };
     window.addEventListener('popstate', handler);
     return () => window.removeEventListener('popstate', handler);
   }, []);

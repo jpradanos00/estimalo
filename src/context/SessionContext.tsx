@@ -281,6 +281,23 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, [session?.current_task_id, session?.status, tasks]);
 
+  useEffect(() => {
+    if (myParticipant && participants.length > 0) {
+      const stillHere = participants.find((p) => p.id === myParticipant.id);
+      if (!stillHere) {
+        clearStoredSession(session?.id);
+        setSession(null);
+        setParticipants([]);
+        setTasks([]);
+        setUserStories([]);
+        setVotes([]);
+        setMyParticipant(null);
+        cleanup();
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+    }
+  }, [participants, myParticipant, session, cleanup]);
+
   const createSession = useCallback(
     async (adminName: string, sessionName?: string): Promise<string> => {
       setLoading(true);

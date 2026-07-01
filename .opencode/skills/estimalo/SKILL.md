@@ -1,3 +1,8 @@
+---
+name: estimalo
+description: Planning Poker webapp with weighted voting and Supabase backend. Use when working on estimalo features, realtime sync, i18n, theme, or Supabase integration.
+---
+
 # estímalo — Planning Poker Ponderado
 
 ## What is this project?

@@ -60,7 +60,7 @@ export function MySessions() {
   if (!user) return null;
 
   return (
-    <div className="min-h-[calc(100vh-80px)] max-w-2xl mx-auto px-4 py-8">
+    <div className="flex-1 max-w-2xl mx-auto px-4 py-8 w-full">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">
@@ -102,7 +102,7 @@ export function MySessions() {
         <div className="space-y-3">
           {sessions.map(({ session: s, taskCount, completedCount, lastEstimate }) => (
             <Card key={s.id} hover>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-1">
                     <span className="text-sm font-mono font-bold text-indigo-600 dark:text-indigo-400 tracking-widest">
@@ -114,7 +114,7 @@ export function MySessions() {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
+                  <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-slate-500 flex-wrap">
                     <span>{taskCount} tareas</span>
                     <span>{completedCount} estimadas</span>
                     {lastEstimate && <span>Última: {lastEstimate}h</span>}
@@ -127,7 +127,7 @@ export function MySessions() {
                     navigator.clipboard.writeText(url).catch(() => {});
                     window.open(url, '_blank');
                   }}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 transition-colors focus-ring flex-shrink-0 min-h-[44px]"
+                  className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-500 transition-colors focus-ring flex-shrink-0 min-h-[44px] self-start sm:self-center"
                 >
                   Abrir sala
                 </button>

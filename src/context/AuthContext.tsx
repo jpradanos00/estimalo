@@ -4,6 +4,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   type ReactNode,
 } from 'react';
 import { supabase } from '../lib/supabase';
@@ -85,8 +86,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
   }, []);
 
+  const value = useMemo(() => ({ user, session, loading, signUp, signIn, signInWithGoogle, signOut }), [
+    user, session, loading, signUp, signIn, signInWithGoogle, signOut,
+  ]);
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

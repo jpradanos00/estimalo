@@ -12,7 +12,7 @@ export function SessionRoom() {
   const isVoting = session.status === 'voting' || session.status === 'revealed';
 
   return (
-    <div className="min-h-[calc(100vh-64px)]">
+    <div className="flex-1">
       <SessionHeader />
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">

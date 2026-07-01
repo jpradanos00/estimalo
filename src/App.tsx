@@ -4,6 +4,7 @@ import { I18nProvider } from './i18n/I18nContext';
 import { AuthProvider } from './context/AuthContext';
 import { Landing } from './pages/Landing';
 import { SessionRoom } from './pages/SessionRoom';
+import { Footer } from './components/Footer';
 
 function AppContent() {
   const { session, loading } = useSession();
@@ -16,11 +17,14 @@ function AppContent() {
     );
   }
 
-  if (session) {
-    return <SessionRoom />;
-  }
-
-  return <Landing />;
+  return (
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1">
+        {session ? <SessionRoom /> : <Landing />}
+      </div>
+      <Footer />
+    </div>
+  );
 }
 
 export function App() {

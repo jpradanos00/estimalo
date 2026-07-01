@@ -31,7 +31,7 @@ export function CardSelector({ selected, onSelect, votes, total, isAdmin, onReve
         </div>
       </div>
 
-      <div className="grid grid-cols-4 sm:grid-cols-7 gap-2 sm:gap-3 max-w-lg mx-auto">
+      <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 sm:gap-3 max-w-lg mx-auto">
         {DEFAULT_CARD_SET.filter((c) => c.value !== -1 && c.value !== null).map((card: CardDefinition) => {
           const isSelected = selected === card.value;
           return (

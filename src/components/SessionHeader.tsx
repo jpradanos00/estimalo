@@ -22,11 +22,11 @@ export function SessionHeader() {
     <header className="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700">
       <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-extrabold text-sm">
-            E
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-sm">
+            <span className="text-sm" role="img" aria-label="Planning Poker card">🃏</span>
           </div>
           <div className="hidden sm:block">
-            <h1 className="text-lg font-bold text-slate-900 dark:text-white leading-none">
+            <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent leading-none">
               estímalo
             </h1>
           </div>

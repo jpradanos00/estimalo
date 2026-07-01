@@ -15,6 +15,8 @@ const en: Translations = {
     step2: 'Your team joins with the code',
     step3: 'Adjust weights based on who knows each task best',
     step4: 'Vote and get the weighted average result',
+    freeHosting: 'Deployable for free on Cloudflare Pages + Supabase',
+    noAds: 'No trackers, no ads, no cost',
   },
   create: {
     title: 'Create new room',
@@ -145,6 +147,10 @@ const en: Translations = {
     online: 'online',
     notFound: 'Room not found',
     notFoundDesc: 'The code you entered doesn\'t match any active room.',
+  },
+  footer: {
+    openSource: 'Open Source — made by and for the community',
+    github: 'View source on GitHub',
   },
 };
 

@@ -4,6 +4,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   type ReactNode,
 } from 'react';
@@ -79,6 +80,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const channelsRef = useRef<ReturnType<typeof supabase.channel>[]>([]);
+  const voteChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   const isAdmin = myParticipant?.is_admin ?? false;
 
@@ -89,6 +91,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const cleanup = useCallback(() => {
     channelsRef.current.forEach((ch) => supabase.removeChannel(ch));
     channelsRef.current = [];
+    if (voteChannelRef.current) {
+      supabase.removeChannel(voteChannelRef.current);
+      voteChannelRef.current = null;
+    }
   }, []);
 
   const loadSessionData = useCallback(async (sessionId: string) => {
@@ -189,6 +195,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   );
 
   const subscribeToVotes = useCallback((taskId: string) => {
+    if (voteChannelRef.current) {
+      supabase.removeChannel(voteChannelRef.current);
+      channelsRef.current = channelsRef.current.filter((c) => c !== voteChannelRef.current);
+      voteChannelRef.current = null;
+    }
+
     const ch = supabase
       .channel(`votes:${taskId}`)
       .on(
@@ -206,6 +218,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       )
       .subscribe();
 
+    voteChannelRef.current = ch;
     channelsRef.current.push(ch);
 
     supabase
@@ -431,6 +444,21 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         participant_id: myParticipant.id,
         value,
       });
+      setVotes((prev) => {
+        const idx = prev.findIndex((v) => v.participant_id === myParticipant.id);
+        if (idx >= 0) {
+          const next = [...prev];
+          next[idx] = { ...next[idx], value };
+          return next;
+        }
+        return [...prev, {
+          id: `temp-${Date.now()}`,
+          task_id: session.current_task_id!,
+          participant_id: myParticipant.id,
+          value,
+          created_at: new Date().toISOString(),
+        }];
+      });
     },
     [session?.current_task_id, myParticipant]
   );
@@ -482,34 +510,58 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const value = useMemo(() => ({
+    session,
+    participants,
+    tasks,
+    userStories,
+    currentTask,
+    votes,
+    myParticipant,
+    isAdmin,
+    error,
+    loading,
+    createSession,
+    joinSession,
+    leaveSession,
+    addTask,
+    deleteTask,
+    addUserStory,
+    deleteUserStory,
+    startVoting,
+    castVote,
+    revealVotes,
+    confirmEstimate,
+    resetRound,
+    updateWeight,
+  }), [
+    session,
+    participants,
+    tasks,
+    userStories,
+    currentTask,
+    votes,
+    myParticipant,
+    isAdmin,
+    error,
+    loading,
+    createSession,
+    joinSession,
+    leaveSession,
+    addTask,
+    deleteTask,
+    addUserStory,
+    deleteUserStory,
+    startVoting,
+    castVote,
+    revealVotes,
+    confirmEstimate,
+    resetRound,
+    updateWeight,
+  ]);
+
   return (
-    <SessionContext.Provider
-      value={{
-        session,
-        participants,
-        tasks,
-        userStories,
-        currentTask,
-        votes,
-        myParticipant,
-        isAdmin,
-        error,
-        loading,
-        createSession,
-        joinSession,
-        leaveSession,
-        addTask,
-        deleteTask,
-        addUserStory,
-        deleteUserStory,
-        startVoting,
-        castVote,
-        revealVotes,
-        confirmEstimate,
-        resetRound,
-        updateWeight,
-      }}
-    >
+    <SessionContext.Provider value={value}>
       {children}
     </SessionContext.Provider>
   );

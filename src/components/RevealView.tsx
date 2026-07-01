@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useI18n } from '../hooks/useI18n';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -14,6 +14,52 @@ interface Props {
   onRevote: () => void;
   onConfirm: (estimate: number) => void;
 }
+
+interface VoteRowProps {
+  participant: Participant;
+  value: number;
+  min: number;
+  max: number;
+  t: Record<string, any>;
+}
+
+const VoteRow = memo(function VoteRow({ participant, value, min, max, t }: VoteRowProps) {
+  const pct = max > 0 ? ((value - min) / (max - min || 1)) * 60 : 0;
+  const isSpecialCard = value <= 0;
+
+  return (
+    <div
+      key={participant.id}
+      className="flex items-center gap-3 p-2 rounded-xl"
+    >
+      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+        {participant.name.charAt(0).toUpperCase()}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-slate-900 dark:text-white truncate">
+            {participant.name}
+          </span>
+          {participant.weight !== 1 && (
+            <Badge variant="info">×{participant.weight}</Badge>
+          )}
+          {participant.is_admin && (
+            <Badge variant="warning">{t.common.admin}</Badge>
+          )}
+        </div>
+        <div className="mt-1 bg-slate-100 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+          <div
+            className="h-full bg-indigo-500 rounded-full transition-all duration-700 ease-out"
+            style={{ width: `${isSpecialCard ? 100 : 15 + pct}%` }}
+          />
+        </div>
+      </div>
+      <span className="text-base font-bold text-slate-900 dark:text-white tabular-nums min-w-[4rem] text-right">
+        {formatCardValue(value)}
+      </span>
+    </div>
+  );
+});
 
 export function RevealView({ votes, participants, isAdmin, onRevote, onConfirm }: Props) {
   const { t } = useI18n();
@@ -33,45 +79,16 @@ export function RevealView({ votes, participants, isAdmin, onRevote, onConfirm }
         </h3>
 
         <div className="space-y-2">
-          {result.votes.map(({ participant, value }) => {
-            const pct =
-              result.max > 0 ? ((value - result.min) / (result.max - result.min || 1)) * 60 : 0;
-
-            const isSpecialCard = value <= 0;
-
-            return (
-              <div
-                key={participant.id}
-                className="flex items-center gap-3 p-2 rounded-xl"
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                  {participant.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-slate-900 dark:text-white truncate">
-                      {participant.name}
-                    </span>
-                    {participant.weight !== 1 && (
-                      <Badge variant="info">×{participant.weight}</Badge>
-                    )}
-                    {participant.is_admin && (
-                      <Badge variant="warning">{t.common.admin}</Badge>
-                    )}
-                  </div>
-                  <div className="mt-1 bg-slate-100 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
-                    <div
-                      className="h-full bg-indigo-500 rounded-full transition-all duration-700 ease-out"
-                      style={{ width: `${isSpecialCard ? 100 : 15 + pct}%` }}
-                    />
-                  </div>
-                </div>
-                <span className="text-base font-bold text-slate-900 dark:text-white tabular-nums min-w-[4rem] text-right">
-                  {formatCardValue(value)}
-                </span>
-              </div>
-            );
-          })}
+          {result.votes.map(({ participant, value }) => (
+            <VoteRow
+              key={participant.id}
+              participant={participant}
+              value={value}
+              min={result.min}
+              max={result.max}
+              t={t}
+            />
+          ))}
         </div>
       </Card>
 
@@ -112,7 +129,7 @@ export function RevealView({ votes, participants, isAdmin, onRevote, onConfirm }
       )}
 
       {isAdmin && (
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Button variant="secondary" size="lg" className="flex-1" onClick={onRevote}>
             {t.reveal.revote}
           </Button>

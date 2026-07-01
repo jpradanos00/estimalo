@@ -58,7 +58,7 @@ export function Landing() {
 
   if (screen === 'auth') {
     return (
-      <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center p-4">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md">
           <AuthPage onBack={() => setScreen('main')} />
         </div>
@@ -68,7 +68,7 @@ export function Landing() {
 
   if (screen === 'create') {
     return (
-      <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center p-4">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md">
           {createdCode ? (
             <div className="text-center motion-safe:animate-fade-in">
@@ -111,7 +111,7 @@ export function Landing() {
 
   if (screen === 'join') {
     return (
-      <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center p-4">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md">
           <JoinSession
             onJoined={() => {}}
@@ -124,16 +124,16 @@ export function Landing() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center p-4">
+    <div className="flex-1 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md text-center motion-safe:animate-fade-in">
         <div className="mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/25">
-            <span className="text-3xl font-extrabold text-white">E</span>
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/25 motion-safe:animate-float">
+            <span className="text-4xl" role="img" aria-label="Planning Poker card">🃏</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-1">
-            {t.app.title}
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+            estímalo
           </h1>
-          <p className="text-sm font-medium text-indigo-500 dark:text-indigo-400 mb-3">
+          <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 tracking-wide">
             {t.app.subtitle}
           </p>
           <p className="text-slate-500 dark:text-slate-400 text-sm max-w-xs mx-auto">
@@ -183,7 +183,7 @@ export function Landing() {
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-4">
             {t.landing.howItWorks}
           </p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
               { step: '1', text: t.landing.step1 },
               { step: '2', text: t.landing.step2 },
@@ -206,6 +206,18 @@ export function Landing() {
         <div className="flex justify-center gap-2 mt-6">
           <LangToggle />
           <ThemeToggle />
+        </div>
+
+        <div className="mt-10 pt-6 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex flex-col items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
+            <p className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              {t.landing.freeHosting}
+            </p>
+            <p>{t.landing.noAds}</p>
+          </div>
         </div>
       </div>
     </div>

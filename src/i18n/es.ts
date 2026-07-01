@@ -13,6 +13,8 @@ const es = {
     step2: 'Tu equipo se une con el código',
     step3: 'Ajusta pesos según quién sabe más de cada tarea',
     step4: 'Votan y se calcula la media ponderada',
+    freeHosting: 'Desplegable gratis en Cloudflare Pages + Supabase',
+    noAds: 'Sin trackers, sin anuncios, sin coste',
   },
   create: {
     title: 'Crear nueva sala',
@@ -143,6 +145,10 @@ const es = {
     online: 'en línea',
     notFound: 'Sala no encontrada',
     notFoundDesc: 'El código que has introducido no coincide con ninguna sala activa.',
+  },
+  footer: {
+    openSource: 'Open Source — hecho por y para la comunidad',
+    github: 'Ver código en GitHub',
   },
 };
 

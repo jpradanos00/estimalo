@@ -206,6 +206,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       voteChannelRef.current = null;
     }
 
+    setVotes([]);
+
     const ch = supabase
       .channel(`votes:${taskId}`)
       .on(
@@ -225,14 +227,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
     voteChannelRef.current = ch;
     channelsRef.current.push(ch);
-
-    supabase
-      .from('votes')
-      .select('*')
-      .eq('task_id', taskId)
-      .then((res) => {
-        if (res.data) setVotes(res.data);
-      });
   }, []);
 
   // Reconnect on mount if there's a stored session

@@ -86,6 +86,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const channelsRef = useRef<ReturnType<typeof supabase.channel>[]>([]);
   const voteChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const hasVotedRef = useRef(false);
 
   const isAdmin = myParticipant?.is_admin ?? false;
 
@@ -206,6 +207,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       voteChannelRef.current = null;
     }
 
+    hasVotedRef.current = false;
     setVotes([]);
 
     const ch = supabase
@@ -227,6 +229,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
     voteChannelRef.current = ch;
     channelsRef.current.push(ch);
+
+    supabase
+      .from('votes')
+      .select('*')
+      .eq('task_id', taskId)
+      .then((res) => {
+        if (res.data && !hasVotedRef.current) setVotes(res.data);
+      });
   }, []);
 
   // Reconnect on mount if there's a stored session
@@ -537,6 +547,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const castVote = useCallback(
     async (value: number) => {
       if (!session?.current_task_id || !myParticipant) return;
+      hasVotedRef.current = true;
       await supabase.from('votes').upsert({
         task_id: session.current_task_id,
         participant_id: myParticipant.id,

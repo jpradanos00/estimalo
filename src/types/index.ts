@@ -22,10 +22,19 @@ export interface Participant {
 export interface Task {
   id: string;
   session_id: string;
+  user_story_id: string | null;
   title: string;
   description: string;
   status: TaskStatus;
   final_estimate: number | null;
+  created_at: string;
+}
+
+export interface UserStory {
+  id: string;
+  session_id: string;
+  title: string;
+  description: string;
   created_at: string;
 }
 

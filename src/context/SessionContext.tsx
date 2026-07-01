@@ -8,13 +8,14 @@ import {
   type ReactNode,
 } from 'react';
 import { supabase } from '../lib/supabase';
-import type { Session, Participant, Task, Vote } from '../types';
+import type { Session, Participant, Task, Vote, UserStory } from '../types';
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 interface SessionState {
   session: Session | null;
   participants: Participant[];
   tasks: Task[];
+  userStories: UserStory[];
   currentTask: Task | null;
   votes: Vote[];
   myParticipant: Participant | null;
@@ -24,8 +25,10 @@ interface SessionState {
   createSession: (adminName: string, sessionName?: string) => Promise<string>;
   joinSession: (code: string, name: string) => Promise<void>;
   leaveSession: () => void;
-  addTask: (title: string) => Promise<void>;
+  addTask: (title: string, userStoryId?: string | null) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
+  addUserStory: (title: string) => Promise<void>;
+  deleteUserStory: (storyId: string) => Promise<void>;
   startVoting: (taskId: string) => Promise<void>;
   castVote: (value: number) => Promise<void>;
   revealVotes: () => Promise<void>;
@@ -70,6 +73,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [userStories, setUserStories] = useState<UserStory[]>([]);
   const [votes, setVotes] = useState<Vote[]>([]);
   const [myParticipant, setMyParticipant] = useState<Participant | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -88,9 +92,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loadSessionData = useCallback(async (sessionId: string) => {
-    const [partRes, taskRes] = await Promise.all([
+    const [partRes, taskRes, storyRes] = await Promise.all([
       supabase.from('participants').select('*').eq('session_id', sessionId),
       supabase.from('tasks').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }),
+      supabase.from('user_stories').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }),
     ]);
 
     if (partRes.data) {
@@ -100,6 +105,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setMyParticipant(me);
     }
     if (taskRes.data) setTasks(taskRes.data);
+    if (storyRes.data) setUserStories(storyRes.data);
   }, []);
 
   const subscribeToSession = useCallback(
@@ -159,7 +165,25 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         )
         .subscribe();
 
-      channelsRef.current = [ch1, ch2, ch3];
+      const ch4 = supabase
+        .channel(`user_stories:${sessionId}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'user_stories', filter: `session_id=eq.${sessionId}` },
+          () => {
+            supabase
+              .from('user_stories')
+              .select('*')
+              .eq('session_id', sessionId)
+              .order('created_at', { ascending: true })
+              .then((res) => {
+                if (res.data) setUserStories(res.data);
+              });
+          }
+        )
+        .subscribe();
+
+      channelsRef.current = [ch1, ch2, ch3, ch4];
     },
     [cleanup]
   );
@@ -284,6 +308,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setParticipants([adminPart]);
       setMyParticipant(adminPart);
       setTasks([]);
+      setUserStories([]);
       setVotes([]);
       storeParticipantId(newSession.id, adminPart.id);
       storeSessionCode(code);
@@ -344,21 +369,35 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setParticipants([]);
     setTasks([]);
+    setUserStories([]);
     setVotes([]);
     setMyParticipant(null);
     clearStoredSession();
   }, [cleanup]);
 
-  const addTask = useCallback(async (title: string) => {
+  const addTask = useCallback(async (title: string, userStoryId: string | null = null) => {
     if (!session) return;
     await supabase.from('tasks').insert({
       session_id: session.id,
       title,
+      user_story_id: userStoryId,
     });
   }, [session]);
 
   const deleteTask = useCallback(async (taskId: string) => {
     await supabase.from('tasks').delete().eq('id', taskId);
+  }, []);
+
+  const addUserStory = useCallback(async (title: string) => {
+    if (!session) return;
+    await supabase.from('user_stories').insert({
+      session_id: session.id,
+      title,
+    });
+  }, [session]);
+
+  const deleteUserStory = useCallback(async (storyId: string) => {
+    await supabase.from('user_stories').delete().eq('id', storyId);
   }, []);
 
   const startVoting = useCallback(
@@ -441,6 +480,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         session,
         participants,
         tasks,
+        userStories,
         currentTask,
         votes,
         myParticipant,
@@ -452,6 +492,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         leaveSession,
         addTask,
         deleteTask,
+        addUserStory,
+        deleteUserStory,
         startVoting,
         castVote,
         revealVotes,

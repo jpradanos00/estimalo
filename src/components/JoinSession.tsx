@@ -51,7 +51,7 @@ export function JoinSession({ onJoined, onBack, prefillCode }: Props) {
           </button>
         )}
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-          {hasPrefilledCode ? 'Unirse a la sala' : t.join.title}
+          {hasPrefilledCode ? t.lobby.joinTitle : t.join.title}
         </h2>
       </div>
 
@@ -68,7 +68,7 @@ export function JoinSession({ onJoined, onBack, prefillCode }: Props) {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label={hasPrefilledCode ? '¿Cómo te llamas?' : t.join.yourName}
+          label={hasPrefilledCode ? t.lobby.joinNameLabel : t.join.yourName}
           placeholder={t.join.yourNamePlaceholder}
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -99,7 +99,7 @@ export function JoinSession({ onJoined, onBack, prefillCode }: Props) {
           loading={joining}
           disabled={!name.trim() || !codeValid || loading}
         >
-          {hasPrefilledCode ? 'Entrar' : t.join.join}
+          {hasPrefilledCode ? t.lobby.joinEnter : t.join.join}
         </Button>
       </form>
     </Card>

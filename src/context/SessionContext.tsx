@@ -399,6 +399,28 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(`participant_${found.id}`);
       }
 
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+
+      if (authUser && found.admin_id === authUser.id) {
+        const { data: adminPart } = await supabase
+          .from('participants')
+          .select('*')
+          .eq('session_id', found.id)
+          .eq('is_admin', true)
+          .single();
+
+        if (adminPart) {
+          setSession(found);
+          setMyParticipant(adminPart);
+          storeParticipantId(found.id, adminPart.id);
+          storeSessionCode(found.code);
+          loadSessionData(found.id);
+          subscribeToSession(found.id);
+          setLoading(false);
+          return;
+        }
+      }
+
       const { data: sameName } = await supabase
         .from('participants')
         .select('*')

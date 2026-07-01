@@ -268,9 +268,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         if (!existing) break;
       } while (true);
 
+      const { data: { user } } = await supabase.auth.getUser();
+
       const { data: newSession, error: sessionErr } = await supabase
         .from('sessions')
-        .insert({ code, name: sessionName || null, status: 'lobby' })
+        .insert({ code, name: sessionName || null, status: 'lobby', admin_id: user?.id ?? null })
         .select()
         .single();
 

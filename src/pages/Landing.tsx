@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useI18n } from '../hooks/useI18n';
 import { useSession } from '../hooks/useSession';
+import { useAuth } from '../hooks/useAuth';
 import { CreateSession } from '../components/CreateSession';
 import { JoinSession } from '../components/JoinSession';
+import { AuthPage } from './AuthPage';
+import { MySessions } from './MySessions';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 import { LangToggle } from '../components/ui/LangToggle';
 
-type LandingScreen = 'main' | 'create' | 'join';
+type LandingScreen = 'main' | 'create' | 'join' | 'auth' | 'mysessions';
 
 export function Landing() {
   const { t } = useI18n();
   const { session } = useSession();
+  const { user } = useAuth();
   const [screen, setScreen] = useState<LandingScreen>('main');
   const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [urlJoinCode, setUrlJoinCode] = useState<string | null>(null);
@@ -25,6 +29,20 @@ export function Landing() {
   }, []);
 
   if (session) return null;
+
+  if (screen === 'mysessions') {
+    return <MySessions />;
+  }
+
+  if (screen === 'auth') {
+    return (
+      <div className="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <AuthPage onBack={() => setScreen('main')} />
+        </div>
+      </div>
+    );
+  }
 
   if (screen === 'create') {
     return (
@@ -101,7 +119,12 @@ export function Landing() {
           </p>
         </div>
 
-        <div className="space-y-3 mb-8">
+        <div className="space-y-3 mb-6">
+          {user && (
+            <p className="text-xs text-slate-400 dark:text-slate-500">
+              {user.email}
+            </p>
+          )}
           <button
             onClick={() => setScreen('create')}
             className="w-full px-6 py-4 bg-indigo-600 text-white font-semibold rounded-2xl hover:bg-indigo-500 active:bg-indigo-700 transition-all duration-200 shadow-lg shadow-indigo-500/25 focus-ring text-lg min-h-[56px]"
@@ -114,6 +137,24 @@ export function Landing() {
           >
             {t.landing.joinSession}
           </button>
+        </div>
+
+        <div className="flex justify-center gap-2 mb-6">
+          {user ? (
+            <button
+              onClick={() => setScreen('mysessions')}
+              className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"
+            >
+              Mis sesiones
+            </button>
+          ) : (
+            <button
+              onClick={() => setScreen('auth')}
+              className="px-4 py-2 rounded-xl text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors focus-ring min-h-[44px]"
+            >
+              Iniciar sesión
+            </button>
+          )}
         </div>
 
         <div className="border-t border-slate-200 dark:border-slate-700 pt-6">

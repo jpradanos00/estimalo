@@ -1,6 +1,7 @@
 import { SessionProvider, useSession } from './context/SessionContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { I18nProvider } from './i18n/I18nContext';
+import { AuthProvider } from './context/AuthContext';
 import { Landing } from './pages/Landing';
 import { SessionRoom } from './pages/SessionRoom';
 
@@ -15,20 +16,22 @@ function AppContent() {
     );
   }
 
-  if (!session) {
-    return <Landing />;
+  if (session) {
+    return <SessionRoom />;
   }
 
-  return <SessionRoom />;
+  return <Landing />;
 }
 
 export function App() {
   return (
     <ThemeProvider>
       <I18nProvider>
-        <SessionProvider>
-          <AppContent />
-        </SessionProvider>
+        <AuthProvider>
+          <SessionProvider>
+            <AppContent />
+          </SessionProvider>
+        </AuthProvider>
       </I18nProvider>
     </ThemeProvider>
   );

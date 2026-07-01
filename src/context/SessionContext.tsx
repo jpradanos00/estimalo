@@ -595,7 +595,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const removeParticipant = useCallback(
     async (participantId: string) => {
       await supabase.from('participants').delete().eq('id', participantId);
-      setParticipants((prev) => prev.filter((p) => p.id !== participantId));
     },
     []
   );

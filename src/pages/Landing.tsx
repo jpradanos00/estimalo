@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useI18n } from '../hooks/useI18n';
 import { useSession } from '../hooks/useSession';
 import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
 import { CreateSession } from '../components/CreateSession';
 import { JoinSession } from '../components/JoinSession';
 import { AuthPage } from './AuthPage';
@@ -13,11 +14,12 @@ type LandingScreen = 'main' | 'create' | 'join' | 'auth' | 'mysessions';
 
 export function Landing() {
   const { t } = useI18n();
-  const { session } = useSession();
+  const { session, joinSession } = useSession();
   const { user } = useAuth();
   const [screen, setScreen] = useState<LandingScreen>('main');
   const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [urlJoinCode, setUrlJoinCode] = useState<string | null>(null);
+  const [autoJoining, setAutoJoining] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -27,6 +29,25 @@ export function Landing() {
       setScreen('join');
     }
   }, []);
+
+  useEffect(() => {
+    const check = async () => {
+      if (!urlJoinCode || !user || autoJoining || session) return;
+      setAutoJoining(true);
+      try {
+        const { data: s } = await supabase
+          .from('sessions')
+          .select('*')
+          .eq('code', urlJoinCode)
+          .maybeSingle();
+        if (s?.admin_id === user.id) {
+          await joinSession(urlJoinCode, '');
+        }
+      } catch {}
+      setAutoJoining(false);
+    };
+    check();
+  }, [urlJoinCode, user, session, joinSession, autoJoining]);
 
   useEffect(() => {
     if (screen === 'auth' && user) {

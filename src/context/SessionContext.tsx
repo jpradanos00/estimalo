@@ -263,7 +263,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, [session?.current_task_id, session?.status, subscribeToVotes]);
 
-  // Auto-reset session to lobby if current task is stale (completed or deleted)
+  // Auto-reset session to lobby if current task is stale (completed only — not missing)
   useEffect(() => {
     if (
       session &&
@@ -271,7 +271,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       session.current_task_id
     ) {
       const task = tasks.find((t) => t.id === session.current_task_id);
-      if (!task || task.status === 'completed') {
+      if (task && task.status === 'completed') {
         supabase
           .from('sessions')
           .update({ status: 'lobby', current_task_id: null })
@@ -281,22 +281,22 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     }
   }, [session?.current_task_id, session?.status, tasks]);
 
+  const prevParticipantRef = useRef<string | null>(null);
   useEffect(() => {
-    if (myParticipant && participants.length > 0) {
-      const stillHere = participants.find((p) => p.id === myParticipant.id);
-      if (!stillHere) {
-        clearStoredSession(session?.id);
-        setSession(null);
-        setParticipants([]);
-        setTasks([]);
-        setUserStories([]);
-        setVotes([]);
-        setMyParticipant(null);
-        cleanup();
-        window.history.replaceState(null, '', window.location.pathname);
-      }
+    const currentId = myParticipant?.id ?? null;
+    if (prevParticipantRef.current && !currentId && participants.length > 0) {
+      clearStoredSession(session?.id);
+      setSession(null);
+      setParticipants([]);
+      setTasks([]);
+      setUserStories([]);
+      setVotes([]);
+      setMyParticipant(null);
+      cleanup();
+      window.history.replaceState(null, '', window.location.pathname);
     }
-  }, [participants, myParticipant, session, cleanup]);
+    prevParticipantRef.current = currentId;
+  }, [myParticipant, participants, session, cleanup]);
 
   const createSession = useCallback(
     async (adminName: string, sessionName?: string): Promise<string> => {
@@ -568,7 +568,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   );
 
   const revealVotes = useCallback(async () => {
-    if (!session) return;
+    if (!session?.current_task_id) return;
+    const { data } = await supabase
+      .from('votes')
+      .select('*')
+      .eq('task_id', session.current_task_id);
+    if (data) setVotes(data);
     await supabase
       .from('sessions')
       .update({ status: 'revealed' })

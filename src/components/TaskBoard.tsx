@@ -53,7 +53,7 @@ export function TaskBoard() {
       <Card>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-            {t.lobby.tasks}
+            {t.lobby.stories}
           </h3>
           <span className="text-xs text-slate-400 dark:text-slate-500">
             {tasks.filter((t) => t.status === 'completed').length}/{tasks.length} {t.lobby.completed}

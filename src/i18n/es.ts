@@ -47,6 +47,7 @@ const es = {
     weight: 'Peso',
     defaultWeight: '×1.0',
     tasks: 'Tareas',
+    stories: 'Historias de usuario',
     addTask: 'Añadir tarea',
     startVoting: 'Iniciar ronda',
     noTasks: 'No hay tareas ni historias todavía',

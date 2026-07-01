@@ -36,6 +36,8 @@ interface SessionState {
   confirmEstimate: (estimate: number) => Promise<void>;
   resetRound: () => Promise<void>;
   updateWeight: (participantId: string, weight: number) => Promise<void>;
+  removeParticipant: (participantId: string) => Promise<void>;
+  deleteSession: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionState | null>(null);
@@ -375,6 +377,46 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      const storedId = getStoredParticipantId(found.id);
+      if (storedId) {
+        const { data: existing } = await supabase
+          .from('participants')
+          .select('*')
+          .eq('id', storedId)
+          .eq('session_id', found.id)
+          .single();
+
+        if (existing) {
+          setSession(found);
+          setMyParticipant(existing);
+          storeSessionCode(found.code);
+          loadSessionData(found.id);
+          subscribeToSession(found.id);
+          setLoading(false);
+          return;
+        }
+
+        localStorage.removeItem(`participant_${found.id}`);
+      }
+
+      const { data: sameName } = await supabase
+        .from('participants')
+        .select('*')
+        .eq('session_id', found.id)
+        .eq('name', name)
+        .maybeSingle();
+
+      if (sameName) {
+        setSession(found);
+        setMyParticipant(sameName);
+        storeParticipantId(found.id, sameName.id);
+        storeSessionCode(found.code);
+        loadSessionData(found.id);
+        subscribeToSession(found.id);
+        setLoading(false);
+        return;
+      }
+
       const { data: newPart, error: partErr } = await supabase
         .from('participants')
         .insert({
@@ -528,6 +570,27 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const removeParticipant = useCallback(
+    async (participantId: string) => {
+      await supabase.from('participants').delete().eq('id', participantId);
+      setParticipants((prev) => prev.filter((p) => p.id !== participantId));
+    },
+    []
+  );
+
+  const deleteSession = useCallback(async () => {
+    if (!session) return;
+    cleanup();
+    await supabase.from('sessions').delete().eq('id', session.id);
+    clearStoredSession();
+    setSession(null);
+    setParticipants([]);
+    setTasks([]);
+    setUserStories([]);
+    setVotes([]);
+    setMyParticipant(null);
+  }, [session, cleanup]);
+
   const value = useMemo(() => ({
     session,
     participants,
@@ -552,6 +615,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     confirmEstimate,
     resetRound,
     updateWeight,
+    removeParticipant,
+    deleteSession,
   }), [
     session,
     participants,
@@ -576,6 +641,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     confirmEstimate,
     resetRound,
     updateWeight,
+    removeParticipant,
+    deleteSession,
   ]);
 
   return (

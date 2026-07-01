@@ -49,6 +49,7 @@ const en: Translations = {
     weight: 'Weight',
     defaultWeight: '×1.0',
     tasks: 'Tasks',
+    stories: 'User stories',
     addTask: 'Add task',
     startVoting: 'Start voting round',
     noTasks: 'No tasks or stories yet',

@@ -472,14 +472,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const leaveSession = useCallback(() => {
     cleanup();
+    window.history.replaceState(null, '', window.location.pathname);
+    if (session) clearStoredSession(session.id);
+    else clearStoredSession();
     setSession(null);
     setParticipants([]);
     setTasks([]);
     setUserStories([]);
     setVotes([]);
     setMyParticipant(null);
-    clearStoredSession();
-  }, [cleanup]);
+  }, [cleanup, session]);
 
   const addTask = useCallback(async (title: string, userStoryId: string | null = null) => {
     if (!session) return;
@@ -597,6 +599,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const removeParticipant = useCallback(
     async (participantId: string) => {
+      setParticipants((prev) => prev.filter((p) => p.id !== participantId));
       await supabase.from('participants').delete().eq('id', participantId);
     },
     []
@@ -606,6 +609,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     if (!session) return;
     cleanup();
     clearStoredSession(session.id);
+    window.history.replaceState(null, '', window.location.pathname);
     await supabase.from('sessions').delete().eq('id', session.id);
     setSession(null);
     setParticipants([]);

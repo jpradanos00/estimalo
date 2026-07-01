@@ -28,10 +28,12 @@ export function VotingRound() {
   }, [session?.current_task_id]);
 
   useEffect(() => {
-    if (myParticipant && votes.length > 0) {
-      const myVote = votes.find((v) => v.participant_id === myParticipant.id);
-      if (myVote) setSelected(myVote.value);
+    if (!myParticipant) {
+      setSelected(null);
+      return;
     }
+    const myVote = votes.find((v) => v.participant_id === myParticipant.id);
+    setSelected(myVote ? myVote.value : null);
   }, [votes, myParticipant]);
 
   if (!currentTask || !session) return null;

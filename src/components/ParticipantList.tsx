@@ -56,7 +56,7 @@ const ParticipantRow = memo(function ParticipantRow({
         </div>
 
         <div className="flex items-center gap-1 flex-shrink-0">
-          {isAdmin && !isMe && (
+          {isAdmin && (
             <button
               onClick={() => onToggleEdit(isEditing ? null : participant.id)}
               className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg transition-colors focus-ring ${hasWeight ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'}`}

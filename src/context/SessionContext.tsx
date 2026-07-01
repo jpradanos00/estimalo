@@ -544,6 +544,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const castVote = useCallback(
     async (value: number) => {
       if (!session?.current_task_id || !myParticipant) return;
+      if (!participants.find((p) => p.id === myParticipant.id)) {
+        leaveSession();
+        return;
+      }
       hasVotedRef.current = true;
       await supabase.from('votes').upsert({
         task_id: session.current_task_id,
@@ -566,7 +570,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }];
       });
     },
-    [session?.current_task_id, myParticipant]
+    [session?.current_task_id, myParticipant, participants, leaveSession]
   );
 
   const revealVotes = useCallback(async () => {
@@ -600,6 +604,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const resetRound = useCallback(async () => {
     if (!session?.current_task_id) return;
+    voteRoundRef.current++;
+    hasVotedRef.current = false;
+    setVotes([]);
     await supabase
       .from('votes')
       .delete()
@@ -608,7 +615,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       .from('sessions')
       .update({ status: 'voting' })
       .eq('id', session.id);
-    setVotes([]);
   }, [session]);
 
   const updateWeight = useCallback(

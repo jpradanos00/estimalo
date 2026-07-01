@@ -118,8 +118,8 @@ export function RevealView({ votes, participants, isAdmin, onRevote, onConfirm }
       </div>
 
       <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 px-2">
-        <span>{t.reveal.min}: <strong className="text-slate-900 dark:text-white">{result.min}h</strong></span>
-        <span>{t.reveal.max}: <strong className="text-slate-900 dark:text-white">{result.max}h</strong></span>
+        <span>{t.reveal.min}: <strong className="text-slate-900 dark:text-white">{result.totalWeight > 0 ? `${result.min}h` : '—'}</strong></span>
+        <span>{t.reveal.max}: <strong className="text-slate-900 dark:text-white">{result.totalWeight > 0 ? `${result.max}h` : '—'}</strong></span>
       </div>
 
       {maxDeviation > 20 && (
@@ -137,11 +137,7 @@ export function RevealView({ votes, participants, isAdmin, onRevote, onConfirm }
             variant="primary"
             size="lg"
             className="flex-1"
-            onClick={() => onConfirm(
-              result.weightedMean > 0
-                ? Math.round(result.weightedMean * 2) / 2
-                : Math.round(result.simpleMean * 2) / 2
-            )}
+            onClick={() => onConfirm(result.weightedMean > 0 ? result.weightedMean : result.simpleMean)}
           >
             {t.reveal.confirm}
           </Button>

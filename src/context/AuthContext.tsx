@@ -15,6 +15,7 @@ interface AuthState {
   loading: boolean;
   signUp: (email: string, password: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -44,13 +45,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUp = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) return { error: error.message };
+    const { error, data } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      if (error.message.includes('rate')) return { error: 'Demasiados intentos. Espera unos minutos.' };
+      if (error.message.includes('already')) return { error: 'Este email ya está registrado.' };
+      return { error: error.message };
+    }
+    if (data.user && data.session) {
+      setUser(data.user);
+      setSession(data.session);
+    }
     return { error: null };
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      if (error.message.includes('Invalid')) return { error: 'Email o contraseña incorrectos.' };
+      if (error.message.includes('rate')) return { error: 'Demasiados intentos. Espera unos minutos.' };
+      return { error: error.message };
+    }
+    return { error: null };
+  }, []);
+
+  const signInWithGoogle = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
     if (error) return { error: error.message };
     return { error: null };
   }, []);
@@ -62,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signInWithGoogle, signOut }}>
       {children}
     </AuthContext.Provider>
   );

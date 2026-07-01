@@ -28,7 +28,29 @@ export function Landing() {
     }
   }, []);
 
+  useEffect(() => {
+    if (screen === 'auth' && user) {
+      setScreen('main');
+    }
+  }, [user, screen]);
+
   if (session) return null;
+
+  const goToCreate = () => {
+    if (!user) {
+      setScreen('auth');
+      return;
+    }
+    setScreen('create');
+  };
+
+  const goToMySessions = () => {
+    if (!user) {
+      setScreen('auth');
+      return;
+    }
+    setScreen('mysessions');
+  };
 
   if (screen === 'mysessions') {
     return <MySessions />;
@@ -126,7 +148,7 @@ export function Landing() {
             </p>
           )}
           <button
-            onClick={() => setScreen('create')}
+            onClick={goToCreate}
             className="w-full px-6 py-4 bg-indigo-600 text-white font-semibold rounded-2xl hover:bg-indigo-500 active:bg-indigo-700 transition-all duration-200 shadow-lg shadow-indigo-500/25 focus-ring text-lg min-h-[56px]"
           >
             {t.landing.createSession}
@@ -142,7 +164,7 @@ export function Landing() {
         <div className="flex justify-center gap-2 mb-6">
           {user ? (
             <button
-              onClick={() => setScreen('mysessions')}
+              onClick={goToMySessions}
               className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"
             >
               Mis sesiones

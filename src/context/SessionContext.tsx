@@ -270,9 +270,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
       const { data: { user } } = await supabase.auth.getUser();
 
+      if (!user) {
+        setError('Debes iniciar sesión para crear una sala.');
+        setLoading(false);
+        return '';
+      }
+
       const { data: newSession, error: sessionErr } = await supabase
         .from('sessions')
-        .insert({ code, name: sessionName || null, status: 'lobby', admin_id: user?.id ?? null })
+        .insert({ code, name: sessionName || null, status: 'lobby', admin_id: user.id })
         .select()
         .single();
 

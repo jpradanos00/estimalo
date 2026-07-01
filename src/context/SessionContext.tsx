@@ -87,6 +87,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const channelsRef = useRef<ReturnType<typeof supabase.channel>[]>([]);
   const voteChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const hasVotedRef = useRef(false);
+  const voteRoundRef = useRef(0);
 
   const isAdmin = myParticipant?.is_admin ?? false;
 
@@ -152,6 +153,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
                   setParticipants(res.data);
                   const storedId = getStoredParticipantId(sessionId);
                   const me = res.data.find((p) => p.id === storedId) ?? null;
+                  if (!me && storedId) {
+                    clearStoredSession(sessionId);
+                    setSession(null);
+                    setParticipants([]);
+                    setTasks([]);
+                    setUserStories([]);
+                    setVotes([]);
+                    setMyParticipant(null);
+                    cleanup();
+                    window.history.replaceState(null, '', window.location.pathname);
+                    return;
+                  }
                   setMyParticipant(me);
                 }
               });
@@ -207,6 +220,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       voteChannelRef.current = null;
     }
 
+    const round = ++voteRoundRef.current;
     hasVotedRef.current = false;
     setVotes([]);
 
@@ -221,7 +235,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             .select('*')
             .eq('task_id', taskId)
             .then((res) => {
-              if (res.data) setVotes(res.data);
+              if (res.data && voteRoundRef.current === round) setVotes(res.data);
             });
         }
       )
@@ -284,23 +298,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [session?.current_task_id, session?.status, tasks]);
-
-  const prevParticipantRef = useRef<string | null>(null);
-  useEffect(() => {
-    const currentId = myParticipant?.id ?? null;
-    if (prevParticipantRef.current && !currentId && participants.length > 0) {
-      clearStoredSession(session?.id);
-      setSession(null);
-      setParticipants([]);
-      setTasks([]);
-      setUserStories([]);
-      setVotes([]);
-      setMyParticipant(null);
-      cleanup();
-      window.history.replaceState(null, '', window.location.pathname);
-    }
-    prevParticipantRef.current = currentId;
-  }, [myParticipant, participants, session, cleanup]);
 
   const createSession = useCallback(
     async (adminName: string, sessionName?: string): Promise<string> => {
@@ -588,6 +585,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const confirmEstimate = useCallback(
     async (estimate: number) => {
       if (!session?.current_task_id) return;
+      setVotes([]);
       await supabase
         .from('tasks')
         .update({ status: 'completed', final_estimate: estimate })
@@ -596,7 +594,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         .from('sessions')
         .update({ status: 'lobby', current_task_id: null })
         .eq('id', session.id);
-      setVotes([]);
     },
     [session]
   );

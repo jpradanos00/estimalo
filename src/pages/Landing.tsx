@@ -57,20 +57,32 @@ export function Landing() {
 
   if (session) return null;
 
+  const navigate = (s: LandingScreen) => {
+    setScreen(s);
+    const hash = s === 'main' ? '' : `#${s}`;
+    window.history.pushState({ screen: s }, '', hash ? hash : window.location.pathname);
+  };
+
+  useEffect(() => {
+    const handler = () => setScreen('main');
+    window.addEventListener('popstate', handler);
+    return () => window.removeEventListener('popstate', handler);
+  }, []);
+
   const goToCreate = () => {
     if (!user) {
-      setScreen('auth');
+      navigate('auth');
       return;
     }
-    setScreen('create');
+    navigate('create');
   };
 
   const goToMySessions = () => {
     if (!user) {
-      setScreen('auth');
+      navigate('auth');
       return;
     }
-    setScreen('mysessions');
+    navigate('mysessions');
   };
 
   if (screen === 'mysessions') {
@@ -123,7 +135,7 @@ export function Landing() {
               </p>
             </div>
           ) : (
-            <CreateSession onCreated={(code) => setCreatedCode(code)} />
+            <CreateSession onCreated={(code) => setCreatedCode(code)} onBack={() => navigate('main')} />
           )}
         </div>
       </div>
@@ -136,7 +148,7 @@ export function Landing() {
         <div className="w-full max-w-md">
           <JoinSession
             onJoined={() => {}}
-            onBack={() => setScreen('main')}
+            onBack={() => navigate('main')}
             prefillCode={urlJoinCode || undefined}
           />
         </div>
@@ -175,7 +187,7 @@ export function Landing() {
             {t.landing.createSession}
           </button>
           <button
-            onClick={() => setScreen('join')}
+            onClick={() => navigate('join')}
             className="w-full px-6 py-4 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold rounded-2xl border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 focus-ring text-lg min-h-[56px]"
           >
             {t.landing.joinSession}
@@ -192,7 +204,7 @@ export function Landing() {
             </button>
           ) : (
             <button
-              onClick={() => setScreen('auth')}
+              onClick={() => navigate('auth')}
               className="px-4 py-2 rounded-xl text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors focus-ring min-h-[44px]"
             >
               Iniciar sesión

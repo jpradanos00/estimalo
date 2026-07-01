@@ -117,7 +117,7 @@ const ParticipantRow = memo(function ParticipantRow({
       {isOpen && (
         <div
           ref={popoverRef}
-          className="absolute right-0 top-full z-20 mt-1 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 motion-safe:animate-fade-in"
+          className="absolute left-1/2 -translate-x-1/2 top-full z-[101] mt-1 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 motion-safe:animate-fade-in"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-semibold text-slate-900 dark:text-white">

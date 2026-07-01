@@ -68,8 +68,11 @@ function storeSessionCode(code: string) {
   localStorage.setItem('current_session_code', code);
 }
 
-function clearStoredSession() {
+function clearStoredSession(sessionId?: string) {
   localStorage.removeItem('current_session_code');
+  if (sessionId) {
+    localStorage.removeItem(`participant_${sessionId}`);
+  }
 }
 
 export function SessionProvider({ children }: { children: ReactNode }) {
@@ -602,8 +605,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const deleteSession = useCallback(async () => {
     if (!session) return;
     cleanup();
+    clearStoredSession(session.id);
     await supabase.from('sessions').delete().eq('id', session.id);
-    clearStoredSession();
     setSession(null);
     setParticipants([]);
     setTasks([]);

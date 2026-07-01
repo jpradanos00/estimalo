@@ -7,9 +7,10 @@ import { Card } from './ui/Card';
 
 interface Props {
   onCreated: (code: string) => void;
+  onBack: () => void;
 }
 
-export function CreateSession({ onCreated }: Props) {
+export function CreateSession({ onCreated, onBack }: Props) {
   const { t } = useI18n();
   const { createSession, error, loading } = useSession();
   const [name, setName] = useState('');
@@ -27,9 +28,20 @@ export function CreateSession({ onCreated }: Props) {
 
   return (
     <Card padding="lg" className="max-w-md w-full mx-auto motion-safe:animate-fade-in">
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">
-        {t.create.title}
-      </h2>
+      <div className="flex items-center gap-3 mb-6">
+        <button
+          onClick={onBack}
+          className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-ring text-slate-500"
+          aria-label={t.common.back}
+        >
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+          {t.create.title}
+        </h2>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label={t.create.yourName}

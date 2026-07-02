@@ -39,6 +39,7 @@ interface SessionState {
   removeParticipant: (participantId: string) => Promise<void>;
   deleteSession: () => Promise<void>;
   updateVoteWeight: (voteId: string, weight: number) => Promise<void>;
+  sendNudge: (targetParticipantId: string, emoji: string) => Promise<void>;
 }
 
 const SessionContext = createContext<SessionState | null>(null);
@@ -158,6 +159,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         })
         .subscribe();
 
+      const chNudge = supabase
+        .channel(`nudge:${sessionId}`)
+        .on('broadcast' as any, { event: 'nudge' }, (payload: any) => {
+          const data = payload?.payload;
+          if (!data) return;
+          window.dispatchEvent(new CustomEvent('nudge', { detail: data }));
+        })
+        .subscribe();
+
       const ch2 = supabase
         .channel(`participants:${sessionId}`)
         .on(
@@ -229,7 +239,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         )
         .subscribe();
 
-      channelsRef.current = [ch1, chKick, ch2, ch3, ch4];
+      channelsRef.current = [ch1, chKick, chNudge, ch2, ch3, ch4];
     },
     [cleanup]
   );
@@ -669,6 +679,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const sendNudge = useCallback(
+    async (targetParticipantId: string, emoji: string) => {
+      if (!session) return;
+      const ch = supabase.channel(`nudge:${session.id}`);
+      await ch.send({
+        type: 'broadcast',
+        event: 'nudge',
+        payload: { targetParticipantId, emoji, from: myParticipant?.name },
+      });
+    },
+    [session, myParticipant]
+  );
+
   const deleteSession = useCallback(async () => {
     if (!session) return;
     cleanup();
@@ -710,6 +733,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     removeParticipant,
     deleteSession,
     updateVoteWeight,
+    sendNudge,
   }), [
     session,
     participants,
@@ -737,6 +761,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     removeParticipant,
     deleteSession,
     updateVoteWeight,
+    sendNudge,
   ]);
 
   return (

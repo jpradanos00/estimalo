@@ -20,6 +20,7 @@ export function VotingRound() {
     revealVotes,
     confirmEstimate,
     resetRound,
+    sendNudge,
   } = useSession();
 
   const [selected, setSelected] = useState<number | null>(null);
@@ -73,10 +74,12 @@ export function VotingRound() {
             setSelected(val);
             castVote(val);
           }}
-          votes={votes.length}
-          total={participants.length}
+          votes={votes}
+          participants={participants}
+          myParticipantId={myParticipant?.id}
           isAdmin={isAdmin}
           onReveal={revealVotes}
+          onNudge={sendNudge}
         />
       ) : (
         <RevealView

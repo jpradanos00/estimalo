@@ -1,38 +1,36 @@
 import { useI18n } from '../hooks/useI18n';
 import { DEFAULT_CARD_SET, formatCardValue } from '../utils/cards';
-import type { CardDefinition } from '../types';
+import { VotingProgress } from './VotingProgress';
+import type { CardDefinition, Participant, Vote } from '../types';
 
 interface Props {
   selected: number | null;
   onSelect: (value: number) => void;
-  votes: number;
-  total: number;
+  votes: Vote[];
+  participants: Participant[];
+  myParticipantId: string | undefined;
   isAdmin: boolean;
   onReveal: () => void;
+  onNudge: (targetId: string, emoji: string) => void;
 }
 
 const SPECIAL_CARDS = DEFAULT_CARD_SET.filter((c) => c.value === null || c.value === -1);
 const NUMERIC_CARDS = DEFAULT_CARD_SET.filter((c) => c.value !== -1 && c.value !== null);
 
-export function CardSelector({ selected, onSelect, votes, total, isAdmin, onReveal }: Props) {
+export function CardSelector({ selected, onSelect, votes, participants, myParticipantId, isAdmin, onReveal, onNudge }: Props) {
   const { t } = useI18n();
 
   return (
     <div>
-      <div className="text-center mb-6">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
-          {t.voting.title}
-        </h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          {t.voting.voted}: {votes}/{total}
-        </p>
-        <div className="mt-2 w-full max-w-xs mx-auto h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-indigo-500 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${total > 0 ? (votes / total) * 100 : 0}%` }}
-          />
-        </div>
-      </div>
+      <h2 className="text-lg font-bold text-slate-900 dark:text-white text-center mb-4">
+        {t.voting.title}
+      </h2>
+      <VotingProgress
+        participants={participants}
+        votes={votes}
+        myParticipantId={myParticipantId}
+        onNudge={onNudge}
+      />
 
       <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 sm:gap-3 max-w-lg mx-auto">
         {NUMERIC_CARDS.map((card: CardDefinition) => {
@@ -78,7 +76,7 @@ export function CardSelector({ selected, onSelect, votes, total, isAdmin, onReve
         })}
       </div>
 
-      {isAdmin && votes > 0 && (
+      {isAdmin && votes.length > 0 && (
         <div className="text-center mt-6">
           <button
             onClick={onReveal}

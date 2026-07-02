@@ -38,9 +38,9 @@ const ParticipantRow = memo(function ParticipantRow({
         >
           {participant.name.charAt(0).toUpperCase()}
         </div>
-        <div className="flex-1 min-w-0 overflow-hidden">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-slate-900 dark:text-white truncate">
+            <span className="text-sm font-medium text-slate-900 dark:text-white break-words">
               {participant.name}
             </span>
             {isMe && (

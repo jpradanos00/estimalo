@@ -85,6 +85,8 @@ const en: Translations = {
     hours: 'hours',
     needInfo: 'Need more info',
     break: 'Coffee break',
+    nudge: 'Tap to nudge',
+    participants: 'Participants',
   },
   reveal: {
     title: 'Results',

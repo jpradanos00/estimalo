@@ -83,6 +83,8 @@ const es = {
     hours: 'horas',
     needInfo: 'Necesito más info',
     break: 'Pausa / café',
+    nudge: 'Toca para avisar',
+    participants: 'Participantes',
   },
   reveal: {
     title: 'Resultados',

@@ -105,6 +105,7 @@ const es = {
     vote: 'Voto',
     weightAtVote: 'Peso',
     noVotes: 'No hay votos registrados para esta tarea',
+    saveEstimate: 'Guardar estimación',
   },
   weight: {
     title: 'Ajustar peso',

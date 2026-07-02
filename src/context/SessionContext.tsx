@@ -40,6 +40,7 @@ interface SessionState {
   deleteSession: () => Promise<void>;
   updateVoteWeight: (voteId: string, weight: number) => Promise<void>;
   sendNudge: (targetParticipantId: string, emoji: string) => Promise<void>;
+  reEstimate: (taskId: string, estimate: number) => Promise<void>;
 }
 
 const SessionContext = createContext<SessionState | null>(null);
@@ -736,6 +737,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     [session, myParticipant]
   );
 
+  const reEstimate = useCallback(
+    async (taskId: string, estimate: number) => {
+      await supabase.from('tasks').update({ final_estimate: estimate }).eq('id', taskId);
+    },
+    []
+  );
+
   const deleteSession = useCallback(async () => {
     if (!session) return;
     cleanup();
@@ -778,6 +786,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     deleteSession,
     updateVoteWeight,
     sendNudge,
+    reEstimate,
   }), [
     session,
     participants,
@@ -806,6 +815,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     deleteSession,
     updateVoteWeight,
     sendNudge,
+    reEstimate,
   ]);
 
   return (

@@ -107,6 +107,7 @@ const en: Translations = {
     vote: 'Vote',
     weightAtVote: 'Weight',
     noVotes: 'No votes recorded for this task',
+    saveEstimate: 'Save estimate',
   },
   weight: {
     title: 'Adjust weight',

@@ -19,10 +19,11 @@ const WEIGHTS = [0.5, 1, 1.5, 2, 2.5, 3];
 
 export function TaskResultModal({ taskId, taskTitle, open, onClose }: Props) {
   const { t } = useI18n();
-  const { participants, isAdmin, updateVoteWeight } = useSession();
+  const { participants, isAdmin, updateVoteWeight, reEstimate } = useSession();
   const [votes, setVotes] = useState<Vote[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingVoteId, setEditingVoteId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -186,8 +187,24 @@ export function TaskResultModal({ taskId, taskTitle, open, onClose }: Props) {
           </>
         )}
 
-        <div className="mt-6">
-          <Button variant="secondary" onClick={onClose} className="w-full min-h-[44px]" size="lg">
+        <div className="mt-6 flex gap-3">
+          {isAdmin && result.weightedMean > 0 && (
+            <Button
+              variant="primary"
+              size="lg"
+              className="flex-1"
+              loading={saving}
+              onClick={async () => {
+                setSaving(true);
+                await reEstimate(taskId, result.weightedMean);
+                setSaving(false);
+                onClose();
+              }}
+            >
+              {t.result.saveEstimate}
+            </Button>
+          )}
+          <Button variant="secondary" onClick={onClose} className="flex-1 min-h-[44px]" size="lg">
             {t.common.close}
           </Button>
         </div>

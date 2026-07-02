@@ -14,9 +14,10 @@ interface Props {
 
 export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defaultExpanded = false, onViewResult }: Props) {
   const { t } = useI18n();
-  const { isAdmin, addTask, deleteTask, startVoting, session } = useSession();
+  const { isAdmin, addTask, deleteTask, deleteUserStory, startVoting, reopenTask, session } = useSession();
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [adding, setAdding] = useState(false);
+  const [showDeleteStory, setShowDeleteStory] = useState(false);
 
   const completedTasks = tasks.filter((t) => t.status === 'completed');
   const canAdd = isAdmin && session?.status === 'lobby';
@@ -56,6 +57,18 @@ export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defau
             <Badge variant="success">{t.lobby.completed}</Badge>
           ) : (
             <Badge variant="warning">{t.lobby.pending}</Badge>
+          )}
+          {isAdmin && session?.status === 'lobby' && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowDeleteStory(true); }}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring"
+              aria-label={`${t.lobby.deleteStory} ${story.title}`}
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
           )}
         </div>
       </button>
@@ -105,6 +118,26 @@ export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defau
                       >
                         {t.result.viewBreakdown}
                       </button>
+                    )}
+                    {isCompleted && isAdmin && session?.status === 'lobby' && (
+                      <div className="flex items-center gap-1 flex-shrink-0 w-full sm:w-auto">
+                        <button
+                          onClick={() => reopenTask(task.id)}
+                          className="flex-1 sm:flex-none px-2.5 py-1.5 text-[11px] font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors focus-ring min-h-[44px]"
+                        >
+                          {t.result.reopen}
+                        </button>
+                        <button
+                          onClick={() => deleteTask(task.id)}
+                          className="w-11 h-11 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring flex-shrink-0"
+                          aria-label={t.lobby.deleteTask}
+                        >
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </button>
+                      </div>
                     )}
                     {!isCompleted && isAdmin && session?.status === 'lobby' && (
                       <div className="flex items-center gap-1 flex-shrink-0 w-full sm:w-auto">
@@ -156,6 +189,33 @@ export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defau
               {t.lobby.addTask}
             </button>
           )}
+        </div>
+      )}
+
+      {showDeleteStory && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowDeleteStory(false)}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-xl motion-safe:animate-fade-in" onClick={(e) => e.stopPropagation()}>
+            <p className="text-slate-900 dark:text-white font-medium mb-2">
+              {t.lobby.deleteStory}
+            </p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+              {t.lobby.deleteStoryDesc}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteStory(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors focus-ring min-h-[44px]"
+              >
+                {t.common.cancel}
+              </button>
+              <button
+                onClick={() => { setShowDeleteStory(false); deleteUserStory(story.id); }}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-red-600 text-white hover:bg-red-500 transition-colors focus-ring min-h-[44px]"
+              >
+                {t.common.delete}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

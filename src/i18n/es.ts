@@ -60,6 +60,8 @@ const es = {
     completed: 'COMPLETADA',
     estimated: 'Estimada',
     deleteTask: 'Eliminar tarea',
+    deleteStory: 'Eliminar historia',
+    deleteStoryDesc: 'Se eliminarán todas las tareas dentro de esta historia. Esta acción no se puede deshacer.',
     add: 'Añadir',
     newStory: '+ Historia',
     newTask: '+ Tarea',
@@ -106,6 +108,7 @@ const es = {
     weightAtVote: 'Peso',
     noVotes: 'No hay votos registrados para esta tarea',
     saveEstimate: 'Guardar estimación',
+    reopen: 'Re-estimar',
   },
   weight: {
     title: 'Ajustar peso',

@@ -62,6 +62,8 @@ const en: Translations = {
     completed: 'COMPLETADA',
     estimated: 'Estimated',
     deleteTask: 'Delete task',
+    deleteStory: 'Delete story',
+    deleteStoryDesc: 'All tasks inside this story will be deleted. This action cannot be undone.',
     add: 'Add',
     newStory: '+ Story',
     newTask: '+ Task',
@@ -108,6 +110,7 @@ const en: Translations = {
     weightAtVote: 'Weight',
     noVotes: 'No votes recorded for this task',
     saveEstimate: 'Save estimate',
+    reopen: 'Re-estimate',
   },
   weight: {
     title: 'Adjust weight',

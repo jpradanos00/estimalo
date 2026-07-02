@@ -41,6 +41,7 @@ interface SessionState {
   updateVoteWeight: (voteId: string, weight: number) => Promise<void>;
   sendNudge: (targetParticipantId: string, emoji: string) => Promise<void>;
   reEstimate: (taskId: string, estimate: number) => Promise<void>;
+  reopenTask: (taskId: string) => Promise<void>;
 }
 
 const SessionContext = createContext<SessionState | null>(null);
@@ -744,6 +745,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const reopenTask = useCallback(
+    async (taskId: string) => {
+      await supabase.from('tasks').update({ status: 'pending', final_estimate: null }).eq('id', taskId);
+    },
+    []
+  );
+
   const deleteSession = useCallback(async () => {
     if (!session) return;
     cleanup();
@@ -787,36 +795,38 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     updateVoteWeight,
     sendNudge,
     reEstimate,
+    reopenTask,
   }), [
-    session,
-    participants,
-    tasks,
-    userStories,
-    currentTask,
-    votes,
-    myParticipant,
-    isAdmin,
-    error,
-    loading,
-    createSession,
-    joinSession,
-    leaveSession,
-    addTask,
-    deleteTask,
-    addUserStory,
-    deleteUserStory,
-    startVoting,
-    castVote,
-    revealVotes,
-    confirmEstimate,
-    resetRound,
-    updateWeight,
-    removeParticipant,
-    deleteSession,
-    updateVoteWeight,
-    sendNudge,
-    reEstimate,
-  ]);
+  session,
+  participants,
+  tasks,
+  userStories,
+  currentTask,
+  votes,
+  myParticipant,
+  isAdmin,
+  error,
+  loading,
+  createSession,
+  joinSession,
+  leaveSession,
+  addTask,
+  deleteTask,
+  addUserStory,
+  deleteUserStory,
+  startVoting,
+  castVote,
+  revealVotes,
+  confirmEstimate,
+  resetRound,
+  updateWeight,
+  removeParticipant,
+  deleteSession,
+  updateVoteWeight,
+  sendNudge,
+  reEstimate,
+  reopenTask,
+]);
 
   return (
     <SessionContext.Provider value={value}>

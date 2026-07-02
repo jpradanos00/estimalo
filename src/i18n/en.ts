@@ -15,7 +15,6 @@ const en: Translations = {
     step2: 'Your team joins with the code',
     step3: 'Adjust weights based on who knows each task best',
     step4: 'Vote and get the weighted average result',
-    freeHosting: 'Deployable for free on Cloudflare Pages + Supabase',
     noAds: 'No trackers, no ads, no cost',
   },
   create: {

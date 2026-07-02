@@ -13,7 +13,6 @@ const es = {
     step2: 'Tu equipo se une con el código',
     step3: 'Ajusta pesos según quién sabe más de cada tarea',
     step4: 'Votan y se calcula la media ponderada',
-    freeHosting: 'Desplegable gratis en Cloudflare Pages + Supabase',
     noAds: 'Sin trackers, sin anuncios, sin coste',
   },
   create: {

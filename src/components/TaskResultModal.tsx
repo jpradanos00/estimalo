@@ -105,7 +105,7 @@ export function TaskResultModal({ taskId, taskTitle, open, onClose }: Props) {
             <div className="space-y-2 mb-6">
               {result.votes.map(({ participant, value, weight }) => (
                 <div key={participant.id}>
-                  <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-700/30">
+                  <div className="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-700/30 flex-wrap">
                     <div
                       className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                       aria-hidden="true"
@@ -117,11 +117,12 @@ export function TaskResultModal({ taskId, taskTitle, open, onClose }: Props) {
                         {participant.name}
                       </span>
                     </div>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white tabular-nums min-w-[3rem] text-right flex-shrink-0">
-                      {formatCardValue(value)}
-                    </span>
-                    <div className="flex-shrink-0 text-right">
-                      {isAdmin ? (
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-sm font-bold text-slate-900 dark:text-white tabular-nums min-w-[3rem] text-right">
+                        {formatCardValue(value)}
+                      </span>
+                      <div className="text-right">
+                        {isAdmin ? (
                         <button
                           onClick={() => setEditingVoteId(editingVoteId === participant.id ? null : participant.id)}
                           className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg transition-colors focus-ring min-h-[44px] flex items-center ${weight !== 1 ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
@@ -134,6 +135,7 @@ export function TaskResultModal({ taskId, taskTitle, open, onClose }: Props) {
                         </span>
                       )}
                     </div>
+                  </div>
                   </div>
                   {isAdmin && editingVoteId === participant.id && (
                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 px-2 pb-2 pt-1 motion-safe:animate-fade-in">

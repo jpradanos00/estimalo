@@ -578,6 +578,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [session]);
 
   const deleteTask = useCallback(async (taskId: string) => {
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
     await supabase.from('tasks').delete().eq('id', taskId);
   }, []);
 
@@ -590,6 +591,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [session]);
 
   const deleteUserStory = useCallback(async (storyId: string) => {
+    setUserStories((prev) => prev.filter((s) => s.id !== storyId));
+    setTasks((prev) => prev.map((t) => t.user_story_id === storyId ? { ...t, user_story_id: null } : t));
     await supabase.from('user_stories').delete().eq('id', storyId);
   }, []);
 

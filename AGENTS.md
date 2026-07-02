@@ -98,3 +98,50 @@ Other Clients ← Realtime Subscription ← Supabase
 Default (hours): `0.5, 1, 2, 3, 4, 6, 8, 12, 16, 24, 40, 80, ?, ☕`
 
 The `?` card means "no idea / need more info". The `☕` card means "break / skip".
+
+---
+
+## Deployment Workflow
+
+**CRITICAL: Never push directly to `main` for feature work.** Always use feature branches.
+
+### Workflow
+```bash
+# 1. Create feature branch
+git checkout -b feature-name
+
+# 2. Develop and test locally
+npm run dev
+
+# 3. Commit and push to feature branch
+git add -A
+git commit -m "feat: description"
+git push -u origin feature-name
+
+# 4. Cloudflare Pages auto-deploys a preview URL
+#    e.g. https://<hash>.feature-name.estimalo.pages.dev
+
+# 5. Test on preview URL
+
+# 6. Only merge to main when user approves:
+git checkout main
+git merge feature-name
+git push
+```
+
+### Production URL
+`https://estimalo.pages.dev`
+
+### Preview URLs
+Auto-generated per branch: `https://<hash>.<branch>.estimalo.pages.dev`
+
+### Environment Variables (Cloudflare Pages)
+Required for ALL environments (Production + Preview):
+- `VITE_SUPABASE_URL` = `https://kenncensuqzzpwlwwrnj.supabase.co`
+- `VITE_SUPABASE_ANON_KEY` = (see `.env` file)
+
+### Supabase OAuth Redirect URLs
+```
+http://localhost:3000/**
+https://**.estimalo.pages.dev/**
+```

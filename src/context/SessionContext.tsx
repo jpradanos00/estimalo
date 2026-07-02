@@ -619,9 +619,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           .eq('task_id', session.current_task_id)
           .eq('participant_id', myParticipant.id);
         setVotes((prev) => prev.filter((v) => v.participant_id !== myParticipant.id));
-        if (session.current_task_id) {
-          const ch = supabase.channel(`vote_broadcast:${session.current_task_id}`);
-          await ch.send({ type: 'broadcast', event: 'vote_changed', payload: {} });
+        if (voteBroadcastChannelRef.current) {
+          await voteBroadcastChannelRef.current.send({ type: 'broadcast', event: 'vote_changed', payload: {} });
         }
         return;
       }
@@ -685,7 +684,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     if (!session?.current_task_id) return;
     voteRoundRef.current++;
     hasVotedRef.current = false;
-    setVotes([]);
     await supabase
       .from('votes')
       .delete()

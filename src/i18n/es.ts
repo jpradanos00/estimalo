@@ -95,6 +95,13 @@ const es = {
     noConsensus: 'No hay consenso claro — recomendamos re-votar',
     confirmed: 'Estimación confirmada',
   },
+  result: {
+    title: 'Resultado de la tarea',
+    viewBreakdown: 'Ver desglose',
+    vote: 'Voto',
+    weightAtVote: 'Peso',
+    noVotes: 'No hay votos registrados para esta tarea',
+  },
   weight: {
     title: 'Ajustar peso',
     description:

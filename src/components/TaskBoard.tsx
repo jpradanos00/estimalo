@@ -6,6 +6,7 @@ import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 import { StoryForm } from './StoryForm';
 import { StoryAccordion } from './StoryAccordion';
+import { TaskResultModal } from './TaskResultModal';
 import type { Task } from '../types';
 
 export function TaskBoard() {
@@ -22,6 +23,8 @@ export function TaskBoard() {
   } = useSession();
   const [addingStory, setAddingStory] = useState(false);
   const [addingOrphan, setAddingOrphan] = useState(false);
+  const [resultTaskId, setResultTaskId] = useState<string | null>(null);
+  const [resultTaskTitle, setResultTaskTitle] = useState<string>('');
 
   const orphanTasks = useMemo(() => tasks.filter((t) => !t.user_story_id), [tasks]);
   const pendingOrphans = useMemo(() => orphanTasks.filter((t) => t.status === 'pending'), [orphanTasks]);
@@ -75,7 +78,7 @@ export function TaskBoard() {
           <>
             {storiesWithTasks.map(({ story, tasks: storyTasks }) => (
               <div key={story.id} className="mb-2">
-                <StoryAccordion story={story} tasks={storyTasks} />
+                <StoryAccordion story={story} tasks={storyTasks} onViewResult={(id, title) => { setResultTaskId(id); setResultTaskTitle(title); }} />
               </div>
             ))}
 
@@ -119,6 +122,14 @@ export function TaskBoard() {
                           <Badge variant="success">{t.lobby.completed}</Badge>
                         ) : (
                           <Badge variant="warning">{t.lobby.pending}</Badge>
+                        )}
+                        {isCompleted && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setResultTaskId(task.id); setResultTaskTitle(task.title); }}
+                            className="text-[11px] font-medium text-indigo-500 dark:text-indigo-400 hover:underline focus-ring"
+                          >
+                            {t.result.viewBreakdown}
+                          </button>
                         )}
                         {!isCompleted && isAdmin && session?.status === 'lobby' && (
                           <div className="flex items-center gap-1 flex-shrink-0 w-full sm:w-auto sm:flex-shrink">
@@ -199,6 +210,15 @@ export function TaskBoard() {
           </div>
         )}
       </Card>
+
+      {resultTaskId && (
+        <TaskResultModal
+          taskId={resultTaskId}
+          taskTitle={resultTaskTitle}
+          open={true}
+          onClose={() => { setResultTaskId(null); setResultTaskTitle(''); }}
+        />
+      )}
     </div>
   );
 }

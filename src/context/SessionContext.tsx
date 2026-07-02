@@ -38,6 +38,7 @@ interface SessionState {
   updateWeight: (participantId: string, weight: number) => Promise<void>;
   removeParticipant: (participantId: string) => Promise<void>;
   deleteSession: () => Promise<void>;
+  updateVoteWeight: (voteId: string, weight: number) => Promise<void>;
 }
 
 const SessionContext = createContext<SessionState | null>(null);
@@ -553,6 +554,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         task_id: session.current_task_id,
         participant_id: myParticipant.id,
         value,
+        weight: myParticipant.weight,
       });
       setVotes((prev) => {
         const idx = prev.findIndex((v) => v.participant_id === myParticipant.id);
@@ -566,6 +568,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           task_id: session.current_task_id!,
           participant_id: myParticipant.id,
           value,
+          weight: myParticipant.weight,
           created_at: new Date().toISOString(),
         }];
       });
@@ -635,6 +638,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const updateVoteWeight = useCallback(
+    async (voteId: string, weight: number) => {
+      await supabase.from('votes').update({ weight }).eq('id', voteId);
+    },
+    []
+  );
+
   const deleteSession = useCallback(async () => {
     if (!session) return;
     cleanup();
@@ -675,6 +685,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     updateWeight,
     removeParticipant,
     deleteSession,
+    updateVoteWeight,
   }), [
     session,
     participants,
@@ -701,6 +712,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     updateWeight,
     removeParticipant,
     deleteSession,
+    updateVoteWeight,
   ]);
 
   return (

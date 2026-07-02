@@ -45,6 +45,7 @@ export interface Vote {
   task_id: string;
   participant_id: string;
   value: number;
+  weight: number;
   created_at: string;
 }
 
@@ -61,6 +62,7 @@ export interface WeightedResult {
   votes: Array<{
     participant: Participant;
     value: number;
+    weight: number;
   }>;
   simpleMean: number;
   weightedMean: number;

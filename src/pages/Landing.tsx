@@ -15,7 +15,7 @@ type LandingScreen = 'main' | 'create' | 'join' | 'auth' | 'mysessions';
 export function Landing() {
   const { t } = useI18n();
   const { session, joinSession } = useSession();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [screen, setScreen] = useState<LandingScreen>('main');
   const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [urlJoinCode, setUrlJoinCode] = useState<string | null>(null);
@@ -246,6 +246,14 @@ export function Landing() {
         <div className="flex justify-center gap-2 mt-6">
           <LangToggle />
           <ThemeToggle />
+          {user && (
+            <button
+              onClick={() => signOut()}
+              className="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"
+            >
+              {t.auth.signOut}
+            </button>
+          )}
         </div>
 
         <div className="mt-10 pt-6 border-t border-slate-200 dark:border-slate-700">

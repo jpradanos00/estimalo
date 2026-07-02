@@ -10,7 +10,7 @@ export function computeWeightedResult(
     .map((v) => {
       const participant = participantMap.get(v.participant_id);
       if (!participant) return null;
-      return { participant, value: v.value };
+      return { participant, value: v.value, weight: v.weight };
     })
     .filter((e): e is NonNullable<typeof e> => e !== null);
 
@@ -33,12 +33,12 @@ export function computeWeightedResult(
   const max = Math.max(...values);
 
   const totalWeight = numericVotes.reduce(
-    (sum, e) => sum + e.participant.weight,
+    (sum, e) => sum + e.weight,
     0
   );
 
   const weightedSum = numericVotes.reduce(
-    (sum, e) => sum + e.value * e.participant.weight,
+    (sum, e) => sum + e.value * e.weight,
     0
   );
 

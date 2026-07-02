@@ -9,9 +9,10 @@ interface Props {
   story: UserStory;
   tasks: Task[];
   defaultExpanded?: boolean;
+  onViewResult?: (taskId: string, taskTitle: string) => void;
 }
 
-export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defaultExpanded = false }: Props) {
+export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defaultExpanded = false, onViewResult }: Props) {
   const { t } = useI18n();
   const { isAdmin, addTask, deleteTask, startVoting, session } = useSession();
   const [expanded, setExpanded] = useState(defaultExpanded);
@@ -96,6 +97,14 @@ export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defau
                       <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex-shrink-0">
                         {task.final_estimate}h
                       </span>
+                    )}
+                    {isCompleted && onViewResult && (
+                      <button
+                        onClick={() => onViewResult(task.id, task.title)}
+                        className="text-[11px] font-medium text-indigo-500 dark:text-indigo-400 hover:underline focus-ring flex-shrink-0"
+                      >
+                        {t.result.viewBreakdown}
+                      </button>
                     )}
                     {!isCompleted && isAdmin && session?.status === 'lobby' && (
                       <div className="flex items-center gap-1 flex-shrink-0 w-full sm:w-auto">

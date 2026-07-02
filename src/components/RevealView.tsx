@@ -18,12 +18,13 @@ interface Props {
 interface VoteRowProps {
   participant: Participant;
   value: number;
+  weight: number;
   min: number;
   max: number;
   t: Record<string, any>;
 }
 
-const VoteRow = memo(function VoteRow({ participant, value, min, max, t }: VoteRowProps) {
+const VoteRow = memo(function VoteRow({ participant, value, weight, min, max, t }: VoteRowProps) {
   const pct = max > 0 ? ((value - min) / (max - min || 1)) * 60 : 0;
   const isSpecialCard = value <= 0;
 
@@ -40,8 +41,8 @@ const VoteRow = memo(function VoteRow({ participant, value, min, max, t }: VoteR
           <span className="text-sm font-medium text-slate-900 dark:text-white truncate">
             {participant.name}
           </span>
-          {participant.weight !== 1 && (
-            <Badge variant="info">×{participant.weight}</Badge>
+          {weight !== 1 && (
+            <Badge variant="info">×{weight.toFixed(1)}</Badge>
           )}
           {participant.is_admin && (
             <Badge variant="warning">{t.common.admin}</Badge>
@@ -79,11 +80,12 @@ export function RevealView({ votes, participants, isAdmin, onRevote, onConfirm }
         </h3>
 
         <div className="space-y-2">
-          {result.votes.map(({ participant, value }) => (
+          {result.votes.map(({ participant, value, weight }) => (
             <VoteRow
               key={participant.id}
               participant={participant}
               value={value}
+              weight={weight}
               min={result.min}
               max={result.max}
               t={t}

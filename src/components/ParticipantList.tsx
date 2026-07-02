@@ -65,11 +65,7 @@ const ParticipantRow = memo(function ParticipantRow({
             </button>
           )}
 
-          {!isAdmin || isMe ? (
-            <span className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg ${hasWeight ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-slate-300 dark:text-slate-600'}`}>
-              ×{participant.weight.toFixed(1)}
-            </span>
-          ) : (
+          {isAdmin && !isMe ? (
             <button
               onClick={() => onRemove(participant.id)}
               className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring flex-shrink-0"
@@ -80,7 +76,11 @@ const ParticipantRow = memo(function ParticipantRow({
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
-          )}
+          ) : !isAdmin ? (
+            <span className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg ${hasWeight ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-slate-300 dark:text-slate-600'}`}>
+              ×{participant.weight.toFixed(1)}
+            </span>
+          ) : null}
         </div>
       </div>
 

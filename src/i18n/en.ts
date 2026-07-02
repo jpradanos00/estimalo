@@ -97,6 +97,13 @@ const en: Translations = {
     noConsensus: 'No clear consensus — re-vote recommended',
     confirmed: 'Estimate confirmed',
   },
+  result: {
+    title: 'Task result',
+    viewBreakdown: 'View breakdown',
+    vote: 'Vote',
+    weightAtVote: 'Weight',
+    noVotes: 'No votes recorded for this task',
+  },
   weight: {
     title: 'Adjust weight',
     description:

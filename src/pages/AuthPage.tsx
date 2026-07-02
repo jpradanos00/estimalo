@@ -53,7 +53,7 @@ export function AuthPage({ onBack }: Props) {
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={onBack}
-          className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-ring text-slate-500"
+          className="w-11 h-11 rounded-xl flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-ring text-slate-500"
           aria-label="Volver"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -128,7 +128,7 @@ export function AuthPage({ onBack }: Props) {
         <div className="text-center">
           <button
             onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setServerError(null); }}
-            className="text-sm text-indigo-500 dark:text-indigo-400 hover:underline focus-ring"
+            className="text-sm text-indigo-500 dark:text-indigo-400 hover:underline focus-ring min-h-[44px] inline-flex items-center"
           >
             {mode === 'login'
               ? t.auth.noAccount

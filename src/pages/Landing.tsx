@@ -178,7 +178,7 @@ export function Landing() {
             </span>
             <button
               onClick={() => setShowSignOut(true)}
-              className="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors focus-ring px-2 py-1 rounded-lg"
+              className="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors focus-ring px-3 py-2 rounded-lg min-h-[44px]"
             >
               {t.auth.signOut}
             </button>

@@ -41,11 +41,11 @@ export function SessionHeader() {
             <>
               <button
                 onClick={copyLink}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors focus-ring"
+                className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors focus-ring min-h-[44px]"
                 aria-label={t.lobby.copyLink}
               >
-                <span className="tracking-widest">{session.code}</span>
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <span className="tracking-widest text-sm">{session.code}</span>
+                <svg className="w-4 h-4 hidden sm:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                 </svg>
@@ -58,15 +58,15 @@ export function SessionHeader() {
             </>
           )}
 
-          <LangToggle />
-          <ThemeToggle />
+          <LangToggle className="hidden sm:flex" />
+          <ThemeToggle className="hidden sm:flex" />
 
           {session && (
             <>
               {isAdmin && (
                 <button
                   onClick={() => setShowDelete(true)}
-                  className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring"
+                  className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring min-h-[44px] min-w-[44px]"
                   aria-label={t.common.delete}
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -78,7 +78,7 @@ export function SessionHeader() {
               {user && (
                 <button
                   onClick={() => setShowSignOut(true)}
-                  className="flex items-center gap-1 ml-1 px-2 py-1.5 rounded-xl text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-ring"
+                  className="flex items-center gap-1 ml-1 px-2 py-1.5 rounded-xl text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px] min-w-[44px]"
                   aria-label={t.auth.signOut}
                   title={t.auth.signOut}
                 >

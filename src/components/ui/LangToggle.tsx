@@ -1,6 +1,10 @@
 import { useI18n } from '../../hooks/useI18n';
 
-export function LangToggle() {
+interface Props {
+  className?: string;
+}
+
+export function LangToggle({ className = '' }: Props) {
   const { locale, setLocale } = useI18n();
 
   const next = locale === 'es' ? 'en' : 'es';
@@ -8,7 +12,7 @@ export function LangToggle() {
   return (
     <button
       onClick={() => setLocale(next)}
-      className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold uppercase transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 focus-ring text-slate-500 dark:text-slate-400"
+      className={`w-11 h-11 rounded-xl flex items-center justify-center text-xs font-bold uppercase transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 focus-ring text-slate-500 dark:text-slate-400 ${className}`}
       aria-label={`Switch to ${next === 'es' ? 'Spanish' : 'English'}`}
     >
       {next === 'es' ? 'ES' : 'EN'}

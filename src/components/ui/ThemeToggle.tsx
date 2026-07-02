@@ -1,12 +1,16 @@
 import { useTheme } from '../../hooks/useTheme';
 
-export function ThemeToggle() {
+interface Props {
+  className?: string;
+}
+
+export function ThemeToggle({ className = '' }: Props) {
   const { toggle, isDark } = useTheme();
 
   return (
     <button
       onClick={toggle}
-      className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 focus-ring text-slate-500 dark:text-slate-400"
+      className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 focus-ring text-slate-500 dark:text-slate-400 ${className}`}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       <svg

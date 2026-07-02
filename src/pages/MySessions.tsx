@@ -67,16 +67,16 @@ export function MySessions({ onBack }: Props) {
 
   return (
     <div className="flex-1 max-w-2xl mx-auto px-4 py-8 w-full">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white truncate">
             {t.auth.mySessions}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 truncate">
             {user.email}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={onBack}
             className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-xl border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"

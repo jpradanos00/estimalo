@@ -81,7 +81,7 @@ export function TaskResultModal({ taskId, taskTitle, open, onClose }: Props) {
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-ring"
+            className="w-11 h-11 rounded-lg flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus-ring"
             aria-label={t.common.close}
           >
             <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -103,55 +103,53 @@ export function TaskResultModal({ taskId, taskTitle, open, onClose }: Props) {
           <>
             <div className="space-y-2 mb-6">
               {result.votes.map(({ participant, value, weight }) => (
-                <div
-                  key={participant.id}
-                  className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-700/30"
-                >
-                  <div
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-                    aria-hidden="true"
-                  >
-                    {participant.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-slate-900 dark:text-white block truncate">
-                      {participant.name}
+                <div key={participant.id}>
+                  <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-700/30">
+                    <div
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                      aria-hidden="true"
+                    >
+                      {participant.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-slate-900 dark:text-white block truncate">
+                        {participant.name}
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white tabular-nums min-w-[3rem] text-right flex-shrink-0">
+                      {formatCardValue(value)}
                     </span>
-                  </div>
-                  <span className="text-sm font-bold text-slate-900 dark:text-white tabular-nums min-w-[3rem] text-right">
-                    {formatCardValue(value)}
-                  </span>
-                  <div className="flex-shrink-0 min-w-[4rem] text-right">
-                    {isAdmin ? (
-                      editingVoteId === participant.id ? (
-                        <div className="flex items-center gap-1 justify-end motion-safe:animate-fade-in">
-                          {WEIGHTS.map((w) => (
-                            <button
-                              key={w}
-                              onClick={() => {
-                                const voteEntry = votes.find((v) => v.participant_id === participant.id);
-                                if (voteEntry) handleWeightChange(voteEntry.id, w);
-                              }}
-                              className={`w-7 h-7 rounded text-xs font-bold font-mono transition-colors focus-ring ${weight === w ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-500'}`}
-                            >
-                              {w.toFixed(1)}
-                            </button>
-                          ))}
-                        </div>
-                      ) : (
+                    <div className="flex-shrink-0 text-right">
+                      {isAdmin ? (
                         <button
-                          onClick={() => setEditingVoteId(participant.id)}
-                          className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg transition-colors focus-ring ${weight !== 1 ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
+                          onClick={() => setEditingVoteId(editingVoteId === participant.id ? null : participant.id)}
+                          className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg transition-colors focus-ring min-h-[44px] flex items-center ${weight !== 1 ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
                         >
                           ×{weight.toFixed(1)}
                         </button>
-                      )
-                    ) : (
-                      <span className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg ${weight !== 1 ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-slate-300 dark:text-slate-600'}`}>
-                        ×{weight.toFixed(1)}
-                      </span>
-                    )}
+                      ) : (
+                        <span className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg ${weight !== 1 ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'text-slate-300 dark:text-slate-600'}`}>
+                          ×{weight.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
                   </div>
+                  {isAdmin && editingVoteId === participant.id && (
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 px-2 pb-2 pt-1 motion-safe:animate-fade-in">
+                      {WEIGHTS.map((w) => (
+                        <button
+                          key={w}
+                          onClick={() => {
+                            const voteEntry = votes.find((v) => v.participant_id === participant.id);
+                            if (voteEntry) handleWeightChange(voteEntry.id, w);
+                          }}
+                          className={`rounded text-xs font-bold font-mono transition-colors focus-ring min-h-[36px] sm:min-h-[32px] ${weight === w ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-500'}`}
+                        >
+                          {w.toFixed(1)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -668,7 +668,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const confirmEstimate = useCallback(
     async (estimate: number) => {
       if (!session?.current_task_id) return;
-      setVotes([]);
       await supabase
         .from('tasks')
         .update({ status: 'completed', final_estimate: estimate })

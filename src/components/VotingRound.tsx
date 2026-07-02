@@ -74,6 +74,11 @@ export function VotingRound() {
             setSelected(val);
             castVote(val);
           }}
+          onDeselect={() => {
+            lastClickedRef.current = null;
+            setSelected(null);
+            castVote(null);
+          }}
           votes={votes}
           participants={participants}
           myParticipantId={myParticipant?.id}

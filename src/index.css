@@ -16,6 +16,12 @@
   }
 }
 
+@layer base {
+  html {
+    overflow-x: hidden;
+  }
+}
+
 @layer components {
   .card-shadow {
     @apply shadow-sm shadow-slate-200/50 dark:shadow-slate-900/50;

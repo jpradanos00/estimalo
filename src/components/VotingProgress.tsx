@@ -13,15 +13,12 @@ const NUDGE_EMOJIS = ['👉', '🔔', '⏰', '🐢'];
 
 function Avatar({
   name,
-  size = 'sm',
 }: {
   name: string;
-  size?: 'sm' | 'xs';
 }) {
-  const dim = size === 'sm' ? 'w-8 h-8 text-xs' : 'w-6 h-6 text-[10px]';
   return (
     <div
-      className={`${dim} rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold flex-shrink-0`}
+      className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
       aria-hidden="true"
     >
       {name.charAt(0).toUpperCase()}
@@ -44,7 +41,7 @@ function ParticipantAvatar({
   const [showNudgePicker, setShowNudgePicker] = useState(false);
 
   return (
-    <div className="relative flex-shrink-0">
+    <div className="relative flex flex-col items-center gap-1 flex-shrink-0">
       <button
         onClick={() => {
           if (!hasVoted && !isMe) {
@@ -52,7 +49,7 @@ function ParticipantAvatar({
           }
         }}
         disabled={hasVoted || isMe}
-        className={`relative rounded-full transition-all duration-200 ${
+        className={`relative rounded-full transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center ${
           hasVoted
             ? 'ring-2 ring-emerald-400 dark:ring-emerald-500'
             : isMe
@@ -78,8 +75,12 @@ function ParticipantAvatar({
         )}
       </button>
 
+      <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[4rem] text-center leading-tight">
+        {participant.name}
+      </span>
+
       {showNudgePicker && !hasVoted && !isMe && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-2 motion-safe:animate-fade-in">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-2 motion-safe:animate-fade-in">
           <div className="flex gap-1">
             {NUDGE_EMOJIS.map((emoji) => (
               <button
@@ -88,7 +89,7 @@ function ParticipantAvatar({
                   onNudge(participant.id, emoji);
                   setShowNudgePicker(false);
                 }}
-                className="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-lg transition-colors focus-ring"
+                className="w-9 h-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-lg transition-colors focus-ring min-w-[44px] min-h-[44px]"
                 aria-label={`${t.voting.nudge} ${emoji}`}
               >
                 {emoji}
@@ -116,7 +117,7 @@ export const VotingProgress = memo(function VotingProgress({
       <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
         {t.voting.voted}: <strong className="text-slate-900 dark:text-white">{votedCount}/{participants.length}</strong>
       </p>
-      <div className="flex flex-wrap justify-center gap-2" role="list" aria-label={t.voting.participants}>
+      <div className="flex flex-wrap justify-center gap-3" role="list" aria-label={t.voting.participants}>
         {participants.map((p) => (
           <ParticipantAvatar
             key={p.id}

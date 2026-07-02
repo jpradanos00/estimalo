@@ -16,7 +16,7 @@ export function LeaveButton({ variant = 'full' }: Props) {
       <>
         <button
           onClick={() => setShowConfirm(true)}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring"
+          className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring min-h-[44px] min-w-[44px] flex-shrink-0"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

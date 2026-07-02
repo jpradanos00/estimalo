@@ -6,6 +6,7 @@ import type { CardDefinition, Participant, Vote } from '../types';
 interface Props {
   selected: number | null;
   onSelect: (value: number) => void;
+  onDeselect: () => void;
   votes: Vote[];
   participants: Participant[];
   myParticipantId: string | undefined;
@@ -14,10 +15,10 @@ interface Props {
   onNudge: (targetId: string, emoji: string) => void;
 }
 
-const SPECIAL_CARDS = DEFAULT_CARD_SET.filter((c) => c.value === null || c.value === -1);
-const NUMERIC_CARDS = DEFAULT_CARD_SET.filter((c) => c.value !== -1 && c.value !== null);
+const SPECIAL_CARDS = DEFAULT_CARD_SET.filter((c) => c.value === -1 || c.value === -2);
+const NUMERIC_CARDS = DEFAULT_CARD_SET.filter((c) => c.value !== -1 && c.value !== -2 && c.value !== null);
 
-export function CardSelector({ selected, onSelect, votes, participants, myParticipantId, isAdmin, onReveal, onNudge }: Props) {
+export function CardSelector({ selected, onSelect, onDeselect, votes, participants, myParticipantId, isAdmin, onReveal, onNudge }: Props) {
   const { t } = useI18n();
 
   return (
@@ -38,7 +39,13 @@ export function CardSelector({ selected, onSelect, votes, participants, myPartic
           return (
             <button
               key={card.label}
-              onClick={() => card.value !== null && onSelect(card.value)}
+              onClick={() => {
+                if (isSelected) {
+                  onDeselect();
+                } else {
+                  onSelect(card.value!);
+                }
+              }}
               className={`relative aspect-[3/4] rounded-xl font-bold transition-all duration-200 focus-ring flex flex-col items-center justify-center ${
                 isSelected
                   ? `${card.color} text-white ring-4 ring-offset-2 ring-indigo-300 dark:ring-offset-slate-900 scale-105 shadow-lg`
@@ -57,11 +64,17 @@ export function CardSelector({ selected, onSelect, votes, participants, myPartic
       <div className="flex justify-center gap-3 mt-4 max-w-lg mx-auto">
         {SPECIAL_CARDS.map((card: CardDefinition) => {
           const isSelected = selected === card.value;
-          const label = card.value === null ? t.voting.needInfo : t.voting.break;
+          const label = card.value === -2 ? t.voting.needInfo : t.voting.break;
           return (
             <button
               key={card.label}
-              onClick={() => onSelect(card.value as number)}
+              onClick={() => {
+                if (isSelected) {
+                  onDeselect();
+                } else {
+                  onSelect(card.value!);
+                }
+              }}
               className={`flex-1 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 focus-ring min-h-[44px] ${
                 isSelected
                   ? `${card.color} text-white ring-4 ring-offset-2 ring-indigo-300 dark:ring-offset-slate-900 scale-105 shadow-lg`

@@ -39,7 +39,7 @@ const ParticipantRow = memo(function ParticipantRow({
           {participant.name.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-wrap">
             <span className="text-sm font-medium text-slate-900 dark:text-white break-words">
               {participant.name}
             </span>
@@ -60,7 +60,7 @@ const ParticipantRow = memo(function ParticipantRow({
           {isAdmin && (
             <button
               onClick={() => onToggleEdit(isEditing ? null : participant.id)}
-              className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg transition-colors focus-ring ${hasWeight ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
+              className={`text-xs font-mono font-semibold px-2 py-1 rounded-lg transition-colors focus-ring min-h-[44px] flex items-center ${hasWeight ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
             >
               ×{participant.weight.toFixed(1)}
             </button>
@@ -69,7 +69,7 @@ const ParticipantRow = memo(function ParticipantRow({
           {isAdmin && !isMe ? (
             <button
               onClick={() => onRemove(participant.id)}
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring flex-shrink-0"
+              className="w-11 h-11 rounded-lg flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring flex-shrink-0"
               aria-label={`${t.common.delete} ${participant.name}`}
             >
               <svg className="w-3.5 h-3.5 text-slate-400 hover:text-red-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -87,12 +87,12 @@ const ParticipantRow = memo(function ParticipantRow({
 
       {isEditing && (
         <div className="px-2 pb-2 motion-safe:animate-fade-in">
-          <div className="flex items-center gap-1.5 justify-center py-1.5">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 py-1.5 max-w-xs mx-auto">
             {WEIGHTS.map((w) => (
               <button
                 key={w}
                 onClick={() => onWeightChange(participant.id, w)}
-                className={`w-9 h-9 rounded-lg text-xs font-bold font-mono transition-colors focus-ring ${participant.weight === w ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
+                className={`rounded-lg text-xs font-bold font-mono transition-colors focus-ring min-h-[40px] ${participant.weight === w ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
               >
                 {w.toFixed(1)}
               </button>

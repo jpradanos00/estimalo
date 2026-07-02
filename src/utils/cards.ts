@@ -13,7 +13,7 @@ export const DEFAULT_CARD_SET: CardDefinition[] = [
   { label: '24', value: 24, color: 'bg-red-600' },
   { label: '40', value: 40, color: 'bg-rose-500' },
   { label: '80', value: 80, color: 'bg-rose-700' },
-  { label: '?', value: null, color: 'bg-slate-400 dark:bg-slate-600' },
+  { label: '?', value: -2, color: 'bg-slate-400 dark:bg-slate-600' },
   { label: '☕', value: -1, color: 'bg-amber-700' },
 ];
 
@@ -33,7 +33,7 @@ export const CARD_HOUR_LABELS: Record<string, string> = {
 };
 
 export function formatCardValue(value: number | null): string {
-  if (value === null) return '?';
+  if (value === -2) return '?';
   if (value === -1) return '☕';
   if (value === 0.5) return '½h';
   if (value === 1) return '1h';

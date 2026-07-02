@@ -31,7 +31,7 @@ interface SessionState {
   addUserStory: (title: string) => Promise<void>;
   deleteUserStory: (storyId: string) => Promise<void>;
   startVoting: (taskId: string) => Promise<void>;
-  castVote: (value: number) => Promise<void>;
+  castVote: (value: number | null) => Promise<void>;
   revealVotes: () => Promise<void>;
   confirmEstimate: (estimate: number) => Promise<void>;
   resetRound: () => Promise<void>;
@@ -155,7 +155,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             setMyParticipant(null);
             cleanup();
             window.history.replaceState(null, '', window.location.pathname);
+            return;
           }
+          supabase.from('participants').select('*')
+            .eq('session_id', sessionId)
+            .order('joined_at', { ascending: true })
+            .then((res) => { if (res.data) setParticipants(res.data); });
         })
         .subscribe();
 
@@ -573,10 +578,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   );
 
   const castVote = useCallback(
-    async (value: number) => {
+    async (value: number | null) => {
       if (!session?.current_task_id || !myParticipant) return;
       if (!participants.find((p) => p.id === myParticipant.id)) {
         leaveSession();
+        return;
+      }
+      if (value === null) {
+        hasVotedRef.current = false;
+        await supabase.from('votes').delete()
+          .eq('task_id', session.current_task_id)
+          .eq('participant_id', myParticipant.id);
+        setVotes((prev) => prev.filter((v) => v.participant_id !== myParticipant.id));
         return;
       }
       hasVotedRef.current = true;

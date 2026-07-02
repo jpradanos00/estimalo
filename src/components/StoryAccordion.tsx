@@ -93,9 +93,9 @@ export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defau
                       : ''
                   }`}
                 >
-                  <div className="flex items-center gap-3 flex-wrap">
+                  <div className="flex items-start gap-3">
                     {isCompleted ? (
-                      <svg className="w-4 h-4 text-emerald-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                      <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     ) : (
@@ -106,59 +106,61 @@ export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defau
                         {task.title}
                       </p>
                     </div>
-                    {task.final_estimate && (
-                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex-shrink-0">
-                        {task.final_estimate}h
-                      </span>
-                    )}
-                    {isCompleted && onViewResult && (
-                      <button
-                        onClick={() => onViewResult(task.id, task.title)}
-                        className="text-[11px] font-medium text-indigo-500 dark:text-indigo-400 hover:underline focus-ring flex-shrink-0 min-h-[44px] flex items-center"
-                      >
-                        {t.result.viewBreakdown}
-                      </button>
-                    )}
-                    {isCompleted && isAdmin && session?.status === 'lobby' && (
-                      <div className="flex items-center gap-1 flex-shrink-0 w-full sm:w-auto">
+                    <div className="flex-shrink-0 flex items-center gap-2 flex-wrap justify-end">
+                      {task.final_estimate && (
+                        <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                          {task.final_estimate}h
+                        </span>
+                      )}
+                      {isCompleted && onViewResult && (
                         <button
-                          onClick={() => reopenTask(task.id)}
-                          className="flex-1 sm:flex-none px-2.5 py-1.5 text-[11px] font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors focus-ring min-h-[44px]"
+                          onClick={() => onViewResult(task.id, task.title)}
+                          className="text-[11px] font-medium text-indigo-500 dark:text-indigo-400 hover:underline focus-ring min-h-[44px] flex items-center"
                         >
-                          {t.result.reopen}
+                          {t.result.viewBreakdown}
                         </button>
-                        <button
-                          onClick={() => deleteTask(task.id)}
-                          className="w-11 h-11 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring flex-shrink-0"
-                          aria-label={t.lobby.deleteTask}
-                        >
-                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </button>
-                      </div>
-                    )}
-                    {!isCompleted && isAdmin && session?.status === 'lobby' && (
-                      <div className="flex items-center gap-1 flex-shrink-0 w-full sm:w-auto">
-                        <button
-                          onClick={() => startVoting(task.id)}
-                          className="flex-1 sm:flex-none px-2.5 py-1.5 text-[11px] font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors focus-ring min-h-[44px]"
-                        >
-                          {t.lobby.startVoting}
-                        </button>
-                        <button
-                          onClick={() => deleteTask(task.id)}
-                          className="w-11 h-11 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring flex-shrink-0"
-                          aria-label={t.lobby.deleteTask}
-                        >
-                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                          </svg>
-                        </button>
-                      </div>
-                    )}
+                      )}
+                      {isCompleted && isAdmin && session?.status === 'lobby' && (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => reopenTask(task.id)}
+                            className="px-2.5 py-1.5 text-[11px] font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors focus-ring min-h-[44px]"
+                          >
+                            {t.result.reopen}
+                          </button>
+                          <button
+                            onClick={() => deleteTask(task.id)}
+                            className="w-11 h-11 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring flex-shrink-0"
+                            aria-label={t.lobby.deleteTask}
+                          >
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                      {!isCompleted && isAdmin && session?.status === 'lobby' && (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => startVoting(task.id)}
+                            className="px-2.5 py-1.5 text-[11px] font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition-colors focus-ring min-h-[44px]"
+                          >
+                            {t.lobby.startVoting}
+                          </button>
+                          <button
+                            onClick={() => deleteTask(task.id)}
+                            className="w-11 h-11 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring flex-shrink-0"
+                            aria-label={t.lobby.deleteTask}
+                          >
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                  </div>
                   </div>
                 </div>
               );

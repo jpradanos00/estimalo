@@ -40,7 +40,7 @@ const ParticipantRow = memo(function ParticipantRow({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 min-w-0 flex-wrap">
-            <span className="text-sm font-medium text-slate-900 dark:text-white break-words">
+            <span className="text-sm font-medium text-slate-900 dark:text-white break-words min-w-0">
               {participant.name}
             </span>
             {isMe && (

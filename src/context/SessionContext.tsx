@@ -171,6 +171,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         })
         .subscribe();
 
+      const chDataSync = supabase
+        .channel(`data_sync:${sessionId}`)
+        .on('broadcast' as any, { event: 'data_changed' }, () => {
+          supabase.from('tasks').select('*').eq('session_id', sessionId).then((res) => {
+            if (res.data) setTasks(res.data);
+          });
+          supabase.from('user_stories').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }).then((res) => {
+            if (res.data) setUserStories(res.data);
+          });
+        })
+        .subscribe();
+
       const chNudge = supabase
         .channel(`nudge:${sessionId}`)
         .on('broadcast' as any, { event: 'nudge' }, (payload: any) => {
@@ -251,7 +263,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         )
         .subscribe();
 
-      channelsRef.current = [ch1, chKick, chNudge, ch2, ch3, ch4];
+      channelsRef.current = [ch1, chKick, chDataSync, chNudge, ch2, ch3, ch4];
     },
     [cleanup]
   );
@@ -580,7 +592,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const deleteTask = useCallback(async (taskId: string) => {
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
     await supabase.from('tasks').delete().eq('id', taskId);
-  }, []);
+    if (session) {
+      const ch = supabase.channel(`data_sync:${session.id}`);
+      ch.send({ type: 'broadcast', event: 'data_changed', payload: {} });
+    }
+  }, [session]);
 
   const addUserStory = useCallback(async (title: string) => {
     if (!session) return;
@@ -594,7 +610,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setUserStories((prev) => prev.filter((s) => s.id !== storyId));
     setTasks((prev) => prev.map((t) => t.user_story_id === storyId ? { ...t, user_story_id: null } : t));
     await supabase.from('user_stories').delete().eq('id', storyId);
-  }, []);
+    if (session) {
+      const ch = supabase.channel(`data_sync:${session.id}`);
+      ch.send({ type: 'broadcast', event: 'data_changed', payload: {} });
+    }
+  }, [session]);
 
   const startVoting = useCallback(
     async (taskId: string) => {

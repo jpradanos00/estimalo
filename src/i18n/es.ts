@@ -56,9 +56,9 @@ const es = {
     waitingForAdmin: 'Esperando a que el facilitador inicie la ronda...',
     leave: 'Salir',
     confirmLeave: '¿Seguro que quieres salir de la sala?',
-    pending: 'pendiente',
-    completed: 'completada',
-    estimated: 'estimada',
+    pending: 'Pendiente',
+    completed: 'COMPLETADA',
+    estimated: 'Estimada',
     deleteTask: 'Eliminar tarea',
     add: 'Añadir',
     newStory: '+ Historia',
@@ -139,6 +139,7 @@ const es = {
     estimatedCount: 'estimadas',
     lastEstimate: 'Última',
     signOut: 'Cerrar sesión',
+    confirmSignOut: '¿Seguro que quieres cerrar la sesión?',
   },
   common: {
     back: 'Volver',
@@ -157,7 +158,7 @@ const es = {
     notFoundDesc: 'El código que has introducido no coincide con ninguna sala activa.',
   },
   footer: {
-    openSource: 'Open Source — hecho por y para la comunidad',
+    openSource: 'Open Source',
     github: 'Ver código en GitHub',
   },
 };

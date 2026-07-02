@@ -20,6 +20,7 @@ export function Landing() {
   const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [urlJoinCode, setUrlJoinCode] = useState<string | null>(null);
   const [autoJoining, setAutoJoining] = useState(false);
+  const [showSignOut, setShowSignOut] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -176,7 +177,7 @@ export function Landing() {
               {user.email}
             </span>
             <button
-              onClick={() => signOut()}
+              onClick={() => setShowSignOut(true)}
               className="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors focus-ring px-2 py-1 rounded-lg"
             >
               {t.auth.signOut}
@@ -276,6 +277,30 @@ export function Landing() {
         </div>
       </div>
       </div>
+
+      {showSignOut && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowSignOut(false)}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-xl motion-safe:animate-fade-in" onClick={(e) => e.stopPropagation()}>
+            <p className="text-slate-900 dark:text-white font-medium mb-4">
+              {t.auth.confirmSignOut}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowSignOut(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors focus-ring min-h-[44px]"
+              >
+                {t.common.cancel}
+              </button>
+              <button
+                onClick={() => { setShowSignOut(false); signOut(); }}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-red-600 text-white hover:bg-red-500 transition-colors focus-ring min-h-[44px]"
+              >
+                {t.auth.signOut}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

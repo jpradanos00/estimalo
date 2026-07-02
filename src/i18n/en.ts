@@ -58,9 +58,9 @@ const en: Translations = {
     waitingForAdmin: 'Waiting for the facilitator to start the round...',
     leave: 'Leave',
     confirmLeave: 'Are you sure you want to leave the room?',
-    pending: 'pending',
-    completed: 'completed',
-    estimated: 'estimated',
+    pending: 'Pending',
+    completed: 'COMPLETADA',
+    estimated: 'Estimated',
     deleteTask: 'Delete task',
     add: 'Add',
     newStory: '+ Story',
@@ -141,6 +141,7 @@ const en: Translations = {
     estimatedCount: 'estimated',
     lastEstimate: 'Last',
     signOut: 'Sign out',
+    confirmSignOut: 'Are you sure you want to sign out?',
   },
   common: {
     back: 'Back',
@@ -159,7 +160,7 @@ const en: Translations = {
     notFoundDesc: 'The code you entered doesn\'t match any active room.',
   },
   footer: {
-    openSource: 'Open Source — made by and for the community',
+    openSource: 'Open Source',
     github: 'View source on GitHub',
   },
 };

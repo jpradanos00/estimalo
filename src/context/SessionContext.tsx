@@ -107,7 +107,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   const loadSessionData = useCallback(async (sessionId: string) => {
     const [partRes, taskRes, storyRes] = await Promise.all([
-      supabase.from('participants').select('*').eq('session_id', sessionId),
+      supabase.from('participants').select('*').eq('session_id', sessionId).order('joined_at', { ascending: true }),
       supabase.from('tasks').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }),
       supabase.from('user_stories').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }),
     ]);
@@ -139,6 +139,25 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         )
         .subscribe();
 
+      const chKick = supabase
+        .channel(`kick:${sessionId}`)
+        .on('broadcast' as any, { event: 'kick' }, (payload: any) => {
+          const participantId: string | undefined = payload?.payload?.participantId;
+          const storedId = getStoredParticipantId(sessionId);
+          if (participantId && participantId === storedId) {
+            clearStoredSession(sessionId);
+            setSession(null);
+            setParticipants([]);
+            setTasks([]);
+            setUserStories([]);
+            setVotes([]);
+            setMyParticipant(null);
+            cleanup();
+            window.history.replaceState(null, '', window.location.pathname);
+          }
+        })
+        .subscribe();
+
       const ch2 = supabase
         .channel(`participants:${sessionId}`)
         .on(
@@ -149,6 +168,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
               .from('participants')
               .select('*')
               .eq('session_id', sessionId)
+              .order('joined_at', { ascending: true })
               .then((res) => {
                 if (res.data) {
                   setParticipants(res.data);
@@ -209,7 +229,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         )
         .subscribe();
 
-      channelsRef.current = [ch1, ch2, ch3, ch4];
+      channelsRef.current = [ch1, chKick, ch2, ch3, ch4];
     },
     [cleanup]
   );
@@ -634,8 +654,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     async (participantId: string) => {
       setParticipants((prev) => prev.filter((p) => p.id !== participantId));
       await supabase.from('participants').delete().eq('id', participantId);
+      if (session) {
+        const ch = supabase.channel(`kick:${session.id}`);
+        await ch.send({ type: 'broadcast', event: 'kick', payload: { participantId } });
+      }
     },
-    []
+    [session]
   );
 
   const updateVoteWeight = useCallback(

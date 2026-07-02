@@ -102,7 +102,7 @@ export const StoryAccordion = memo(function StoryAccordion({ story, tasks, defau
                       <div className="w-4 h-4 flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm ${isCompleted ? 'text-slate-500 dark:text-slate-400 line-through' : 'text-slate-800 dark:text-slate-200'}`}>
+                      <p className={`text-sm break-words ${isCompleted ? 'text-slate-500 dark:text-slate-400 line-through' : 'text-slate-800 dark:text-slate-200'}`}>
                         {task.title}
                       </p>
                     </div>

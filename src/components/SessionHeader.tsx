@@ -7,9 +7,9 @@ import { LangToggle } from './ui/LangToggle';
 
 export function SessionHeader() {
   const { t } = useI18n();
-  const { session, leaveSession, deleteSession, isAdmin } = useSession();
+  const { session, deleteSession, isAdmin } = useSession();
   const { user, signOut } = useAuth();
-  const [showConfirm, setShowConfirm] = useState(false);
+  const { leaveSession } = useSession();
   const [showDelete, setShowDelete] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -74,27 +74,16 @@ export function SessionHeader() {
                   </svg>
                 </button>
               )}
-              <button
-                onClick={() => setShowConfirm(true)}
-                className="flex items-center gap-1 ml-1 px-2 py-1.5 rounded-xl text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-ring"
-                aria-label={t.lobby.leave}
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-              </button>
               {user && (
                 <button
                   onClick={() => { leaveSession(); signOut(); }}
                   className="flex items-center gap-1 ml-1 px-2 py-1.5 rounded-xl text-sm text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus-ring"
                   aria-label={t.auth.signOut}
+                  title={t.auth.signOut}
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <path d="M16 17l5-5-5-5" />
-                    <path d="M21 12H9" />
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+                    <line x1="12" y1="2" x2="12" y2="12" />
                   </svg>
                 </button>
               )}
@@ -103,38 +92,14 @@ export function SessionHeader() {
         </div>
       </div>
 
-      {showConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowConfirm(false)}>
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-xl motion-safe:animate-fade-in" onClick={(e) => e.stopPropagation()}>
-            <p className="text-slate-900 dark:text-white font-medium mb-4">
-              {t.lobby.confirmLeave}
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors focus-ring min-h-[44px]"
-              >
-                {t.common.cancel}
-              </button>
-              <button
-                onClick={() => { setShowConfirm(false); leaveSession(); }}
-                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-red-600 text-white hover:bg-red-500 transition-colors focus-ring min-h-[44px]"
-              >
-                {t.lobby.leave}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {showDelete && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setShowDelete(false)}>
           <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-xl motion-safe:animate-fade-in" onClick={(e) => e.stopPropagation()}>
             <p className="text-slate-900 dark:text-white font-medium mb-2">
-              ¿Eliminar sala para siempre?
+              {t.lobby.deleteRoom}
             </p>
             <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-              Se borrarán todas las tareas, votos e historias. Esta acción no se puede deshacer.
+              {t.lobby.deleteRoomDesc}
             </p>
             <div className="flex gap-3">
               <button
@@ -147,7 +112,7 @@ export function SessionHeader() {
                 onClick={() => { setShowDelete(false); deleteSession(); }}
                 className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-red-600 text-white hover:bg-red-500 transition-colors focus-ring min-h-[44px]"
               >
-                Eliminar
+                {t.common.delete}
               </button>
             </div>
           </div>

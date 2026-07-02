@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useI18n } from '../hooks/useI18n';
 import { Card } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function AuthPage({ onBack }: Props) {
+  const { t } = useI18n();
   const { signUp, signIn, signInWithGoogle } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
@@ -59,7 +61,7 @@ export function AuthPage({ onBack }: Props) {
           </svg>
         </button>
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-          {mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}
+          {mode === 'login' ? t.auth.loginTitle : t.auth.registerTitle}
         </h2>
       </div>
 
@@ -129,8 +131,8 @@ export function AuthPage({ onBack }: Props) {
             className="text-sm text-indigo-500 dark:text-indigo-400 hover:underline focus-ring"
           >
             {mode === 'login'
-              ? '¿No tienes cuenta? Regístrate'
-              : '¿Ya tienes cuenta? Inicia sesión'}
+              ? t.auth.noAccount
+              : t.auth.hasAccount}
           </button>
         </div>
       </div>

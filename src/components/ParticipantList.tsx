@@ -2,6 +2,7 @@ import { useState, memo, useCallback, useEffect, useRef } from 'react';
 import { useI18n } from '../hooks/useI18n';
 import { useSession } from '../hooks/useSession';
 import { Card } from './ui/Card';
+import { LeaveButton } from './LeaveButton';
 import type { Participant } from '../types';
 
 interface ParticipantRowProps {
@@ -143,6 +144,9 @@ export function ParticipantList() {
           />
         ))}
       </ul>
+      <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
+        <LeaveButton />
+      </div>
     </Card>
   );
 }

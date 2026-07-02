@@ -93,7 +93,7 @@ export function Landing() {
   };
 
   if (screen === 'mysessions') {
-    return <MySessions />;
+    return <MySessions onBack={() => navigate('main')} />;
   }
 
   if (screen === 'auth') {
@@ -164,7 +164,27 @@ export function Landing() {
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-4">
+    <div className="flex-1 flex flex-col">
+      {user && (
+        <div className="w-full bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+          <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-between">
+            <span className="text-xs text-slate-500 dark:text-slate-400 truncate flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              {user.email}
+            </span>
+            <button
+              onClick={() => signOut()}
+              className="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors focus-ring px-2 py-1 rounded-lg"
+            >
+              {t.auth.signOut}
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md text-center motion-safe:animate-fade-in">
         <div className="mb-8">
           <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-indigo-500/25">
@@ -182,11 +202,6 @@ export function Landing() {
         </div>
 
         <div className="space-y-3 mb-6">
-          {user && (
-            <p className="text-xs text-slate-400 dark:text-slate-500">
-              {user.email}
-            </p>
-          )}
           <button
             onClick={goToCreate}
             className="w-full px-6 py-4 bg-indigo-600 text-white font-semibold rounded-2xl hover:bg-indigo-500 active:bg-indigo-700 transition-all duration-200 shadow-lg shadow-indigo-500/25 focus-ring text-lg min-h-[56px]"
@@ -207,14 +222,14 @@ export function Landing() {
               onClick={goToMySessions}
               className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"
             >
-              Mis sesiones
+              {t.auth.mySessions}
             </button>
           ) : (
             <button
               onClick={() => navigate('auth')}
               className="px-4 py-2 rounded-xl text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors focus-ring min-h-[44px]"
             >
-              Iniciar sesión
+              {t.auth.login}
             </button>
           )}
         </div>
@@ -246,14 +261,6 @@ export function Landing() {
         <div className="flex justify-center gap-2 mt-6">
           <LangToggle />
           <ThemeToggle />
-          {user && (
-            <button
-              onClick={() => signOut()}
-              className="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-600 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"
-            >
-              {t.auth.signOut}
-            </button>
-          )}
         </div>
 
         <div className="mt-10 pt-6 border-t border-slate-200 dark:border-slate-700">
@@ -267,6 +274,7 @@ export function Landing() {
             <p>{t.landing.noAds}</p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

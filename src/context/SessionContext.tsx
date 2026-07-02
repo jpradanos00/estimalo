@@ -555,7 +555,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         participant_id: myParticipant.id,
         value,
         weight: myParticipant.weight,
-      });
+      }, { onConflict: 'task_id,participant_id' });
       setVotes((prev) => {
         const idx = prev.findIndex((v) => v.participant_id === myParticipant.id);
         if (idx >= 0) {

@@ -88,6 +88,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const channelsRef = useRef<ReturnType<typeof supabase.channel>[]>([]);
   const voteChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const voteBroadcastChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const hasVotedRef = useRef(false);
   const voteRoundRef = useRef(0);
 
@@ -103,6 +104,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     if (voteChannelRef.current) {
       supabase.removeChannel(voteChannelRef.current);
       voteChannelRef.current = null;
+    }
+    if (voteBroadcastChannelRef.current) {
+      supabase.removeChannel(voteBroadcastChannelRef.current);
+      voteBroadcastChannelRef.current = null;
     }
   }, []);
 
@@ -255,6 +260,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       channelsRef.current = channelsRef.current.filter((c) => c !== voteChannelRef.current);
       voteChannelRef.current = null;
     }
+    if (voteBroadcastChannelRef.current) {
+      supabase.removeChannel(voteBroadcastChannelRef.current);
+      channelsRef.current = channelsRef.current.filter((c) => c !== voteBroadcastChannelRef.current);
+      voteBroadcastChannelRef.current = null;
+    }
 
     const round = ++voteRoundRef.current;
     hasVotedRef.current = false;
@@ -280,6 +290,22 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     voteChannelRef.current = ch;
     channelsRef.current.push(ch);
 
+    const chBroadcast = supabase
+      .channel(`vote_broadcast:${taskId}`)
+      .on('broadcast' as any, { event: 'vote_changed' }, () => {
+        supabase
+          .from('votes')
+          .select('*')
+          .eq('task_id', taskId)
+          .then((res) => {
+            if (res.data && voteRoundRef.current === round) setVotes(res.data);
+          });
+      })
+      .subscribe();
+
+    voteBroadcastChannelRef.current = chBroadcast;
+    channelsRef.current.push(chBroadcast);
+
     supabase
       .from('votes')
       .select('*')
@@ -304,15 +330,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             setSession(data);
             loadSessionData(data.id);
             subscribeToSession(data.id);
+            if (data.current_task_id && (data.status === 'voting' || data.status === 'revealed')) {
+              subscribeToVotes(data.current_task_id);
+            }
           }
           setLoading(false);
         });
     }
   }, [loadSessionData, subscribeToSession]);
 
-  // Subscribe to votes on current task when status is voting/revealed
+  // Subscribe to votes on current task when status transitions to voting
   useEffect(() => {
-    if (session?.current_task_id && (session.status === 'voting' || session.status === 'revealed')) {
+    if (session?.current_task_id && session.status === 'voting') {
       subscribeToVotes(session.current_task_id);
     }
   }, [session?.current_task_id, session?.status, subscribeToVotes]);
@@ -590,6 +619,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           .eq('task_id', session.current_task_id)
           .eq('participant_id', myParticipant.id);
         setVotes((prev) => prev.filter((v) => v.participant_id !== myParticipant.id));
+        if (session.current_task_id) {
+          const ch = supabase.channel(`vote_broadcast:${session.current_task_id}`);
+          await ch.send({ type: 'broadcast', event: 'vote_changed', payload: {} });
+        }
         return;
       }
       hasVotedRef.current = true;

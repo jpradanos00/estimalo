@@ -185,6 +185,7 @@ const en: Translations = {
     sending: 'Sending...',
     sent: 'Thanks! Your message has been sent.',
     error: 'Error sending. Please try again.',
+    configError: 'Feedback service not configured yet.',
   },
 };
 

@@ -42,9 +42,7 @@ export function VotingRound() {
     setSelected(myVote ? myVote.value : null);
   }, [votes, myParticipant]);
 
-  if (!currentTask || !session) return null;
-
-  const isRevealed = session.status === 'revealed';
+  const isRevealed = session?.status === 'revealed';
 
   const numericVotes = useMemo(() => {
     if (!isRevealed) return [];
@@ -67,6 +65,8 @@ export function VotingRound() {
       setShowCelebration(false);
     }
   }, [isRevealed, isUnanimous]);
+
+  if (!currentTask || !session) return null;
 
   return (
     <div className="space-y-6 motion-safe:animate-fade-in">

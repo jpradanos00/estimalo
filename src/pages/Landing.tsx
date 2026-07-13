@@ -266,7 +266,7 @@ export function Landing() {
           <ThemeToggle />
           <button
             onClick={() => setShowFeedback(true)}
-            className="px-4 py-2 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"
+            className="px-4 py-2 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"
             aria-label={t.feedback.title}
           >
             💡

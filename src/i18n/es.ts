@@ -183,6 +183,7 @@ const es = {
     sending: 'Enviando...',
     sent: '¡Gracias! Tu mensaje ha sido enviado.',
     error: 'Error al enviar. Inténtalo de nuevo.',
+    configError: 'Servicio de feedback no configurado aún.',
   },
 };
 

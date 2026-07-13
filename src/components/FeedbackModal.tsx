@@ -16,6 +16,7 @@ export function FeedbackModal({ onClose }: Props) {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = async () => {
@@ -23,9 +24,10 @@ export function FeedbackModal({ onClose }: Props) {
 
     setSending(true);
     setError(false);
+    setErrorMessage('');
 
     try {
-      const { error: fnErr } = await supabase.functions.invoke('send-feedback', {
+      const { data, error: fnErr } = await supabase.functions.invoke('send-feedback', {
         body: {
           type,
           description: description.trim(),
@@ -35,9 +37,18 @@ export function FeedbackModal({ onClose }: Props) {
 
       if (fnErr) throw fnErr;
 
+      if (data?.error) {
+        setError(true);
+        setErrorMessage(data.error.includes('configuration') ? t.feedback.configError : t.feedback.error);
+        setSending(false);
+        return;
+      }
+
       setSent(true);
-    } catch {
+    } catch (err) {
       setError(true);
+      const msg = err instanceof Error ? err.message : '';
+      setErrorMessage(msg.includes('configuration') || msg.includes('Server') ? t.feedback.configError : t.feedback.error);
     } finally {
       setSending(false);
     }
@@ -123,7 +134,7 @@ export function FeedbackModal({ onClose }: Props) {
         </div>
 
         {error && (
-          <p className="text-sm text-red-600 dark:text-red-400 mb-4 text-center">{t.feedback.error}</p>
+          <p className="text-sm text-red-600 dark:text-red-400 mb-4 text-center">{errorMessage || t.feedback.error}</p>
         )}
 
         <div className="flex gap-3">

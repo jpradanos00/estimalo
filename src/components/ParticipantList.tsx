@@ -13,6 +13,7 @@ interface ParticipantRowProps {
   onToggleEdit: (id: string | null) => void;
   onWeightChange: (participantId: string, weight: number) => void;
   onRemove: (participantId: string) => void;
+  onTransferAdmin: (participantId: string) => void;
 }
 
 const WEIGHTS = [0.5, 1, 1.5, 2, 2.5, 3];
@@ -25,6 +26,7 @@ const ParticipantRow = memo(function ParticipantRow({
   onToggleEdit,
   onWeightChange,
   onRemove,
+  onTransferAdmin,
 }: ParticipantRowProps) {
   const { t } = useI18n();
   const hasWeight = participant.weight !== 1;
@@ -57,6 +59,18 @@ const ParticipantRow = memo(function ParticipantRow({
         </div>
 
         <div className="flex items-center gap-1 flex-shrink-0">
+          {isAdmin && !participant.is_admin && (
+            <button
+              onClick={() => onTransferAdmin(participant.id)}
+              className="w-11 h-11 rounded-lg flex items-center justify-center hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors focus-ring flex-shrink-0"
+              aria-label={`${t.lobby.transferAdmin} ${participant.name}`}
+              title={t.lobby.transferAdmin}
+            >
+              <svg className="w-4 h-4 text-amber-500 dark:text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z" />
+              </svg>
+            </button>
+          )}
           {isAdmin && (
             <button
               onClick={() => onToggleEdit(isEditing ? null : participant.id)}
@@ -106,12 +120,17 @@ const ParticipantRow = memo(function ParticipantRow({
 
 export function ParticipantList() {
   const { t } = useI18n();
-  const { participants, myParticipant, isAdmin, updateWeight, removeParticipant } = useSession();
+  const { participants, myParticipant, isAdmin, updateWeight, removeParticipant, transferAdmin } = useSession();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [transferId, setTransferId] = useState<string | null>(null);
   const listRef = useRef<HTMLUListElement>(null);
 
   const handleToggleEdit = useCallback((id: string | null) => {
     setEditingId(id);
+  }, []);
+
+  const handleTransferAdmin = useCallback((id: string) => {
+    setTransferId(id);
   }, []);
 
   useEffect(() => {
@@ -124,6 +143,15 @@ export function ParticipantList() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [editingId]);
+
+  const confirmTransfer = useCallback(() => {
+    if (transferId) {
+      transferAdmin(transferId);
+      setTransferId(null);
+    }
+  }, [transferId, transferAdmin]);
+
+  const targetName = transferId ? participants.find((p) => p.id === transferId)?.name : '';
 
   return (
     <Card>
@@ -141,12 +169,37 @@ export function ParticipantList() {
             onToggleEdit={handleToggleEdit}
             onWeightChange={updateWeight}
             onRemove={removeParticipant}
+            onTransferAdmin={handleTransferAdmin}
           />
         ))}
       </ul>
       <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
         <LeaveButton />
       </div>
+
+      {transferId && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => setTransferId(null)}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-xl motion-safe:animate-fade-in" onClick={(e) => e.stopPropagation()}>
+            <p className="text-slate-900 dark:text-white font-medium mb-4">
+              {t.lobby.confirmTransferAdmin} <strong>{targetName}</strong>?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setTransferId(null)}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors focus-ring min-h-[44px]"
+              >
+                {t.common.cancel}
+              </button>
+              <button
+                onClick={confirmTransfer}
+                className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-amber-500 text-white hover:bg-amber-600 transition-colors focus-ring min-h-[44px]"
+              >
+                {t.common.confirm}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

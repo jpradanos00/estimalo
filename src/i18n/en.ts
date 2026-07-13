@@ -73,6 +73,8 @@ const en: Translations = {
     joinEnter: 'Enter',
     deleteRoom: 'Delete room forever?',
     deleteRoomDesc: 'All tasks, votes and stories will be deleted. This action cannot be undone.',
+    transferAdmin: 'Transfer admin',
+    confirmTransferAdmin: 'Transfer admin role to',
   },
   voting: {
     title: 'Pick your estimate',
@@ -87,6 +89,7 @@ const en: Translations = {
     needInfo: 'Need more info',
     break: 'Coffee break',
     nudge: 'Tap to nudge',
+    nudgedBy: 'nudged by',
     participants: 'Participants',
   },
   reveal: {
@@ -101,6 +104,7 @@ const en: Translations = {
     discussion: 'Discuss the differences and re-vote if needed.',
     noConsensus: 'No clear consensus — re-vote recommended',
     confirmed: 'Estimate confirmed',
+    unanimous: 'Unanimous! 🎉',
   },
   result: {
     title: 'Task result',
@@ -167,6 +171,20 @@ const en: Translations = {
   footer: {
     openSource: 'Open Source',
     github: 'View source on GitHub',
+  },
+  feedback: {
+    title: 'Send feedback',
+    type: 'Type',
+    bug: 'Report a bug',
+    feature: 'Suggest a feature',
+    description: 'Description',
+    descriptionPlaceholder: 'Describe the bug or suggestion...',
+    email: 'Your email (optional)',
+    emailPlaceholder: 'So we can get back to you',
+    send: 'Send',
+    sending: 'Sending...',
+    sent: 'Thanks! Your message has been sent.',
+    error: 'Error sending. Please try again.',
   },
 };
 

@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '../hooks/useI18n';
 import type { Participant, Vote } from '../types';
 
@@ -26,16 +26,23 @@ function Avatar({
   );
 }
 
+interface NudgeInfo {
+  emoji: string;
+  from: string;
+}
+
 function ParticipantAvatar({
   participant,
   hasVoted,
   isMe,
   onNudge,
+  activeNudge,
 }: {
   participant: Participant;
   hasVoted: boolean;
   isMe: boolean;
   onNudge: (targetId: string, emoji: string) => void;
+  activeNudge: NudgeInfo | null;
 }) {
   const { t } = useI18n();
   const [showNudgePicker, setShowNudgePicker] = useState(false);
@@ -73,11 +80,22 @@ function ParticipantAvatar({
             </svg>
           </span>
         )}
+        {activeNudge && (
+          <span className="absolute -top-1 -right-1 text-sm motion-safe:animate-nudge-emoji-pop">
+            {activeNudge.emoji}
+          </span>
+        )}
       </button>
 
       <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[4rem] text-center leading-tight">
         {participant.name}
       </span>
+
+      {activeNudge && (
+        <span className="text-[9px] text-indigo-500 dark:text-indigo-400 truncate max-w-[5rem] text-center leading-tight motion-safe:animate-fade-in">
+          {t.voting.nudgedBy} {activeNudge.from}
+        </span>
+      )}
 
       {showNudgePicker && !hasVoted && !isMe && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-2 motion-safe:animate-fade-in">
@@ -111,6 +129,35 @@ export const VotingProgress = memo(function VotingProgress({
   const { t } = useI18n();
   const votedIds = new Set(votes.map((v) => v.participant_id));
   const votedCount = participants.filter((p) => votedIds.has(p.id)).length;
+  const [activeNudges, setActiveNudges] = useState<Record<string, NudgeInfo>>({});
+  const timersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+
+  const handleNudge = useCallback((event: Event) => {
+    const data = (event as CustomEvent).detail;
+    if (!data?.targetParticipantId) return;
+    const { targetParticipantId, emoji, from } = data;
+
+    setActiveNudges((prev) => ({ ...prev, [targetParticipantId]: { emoji, from: from || '' } }));
+
+    if (timersRef.current[targetParticipantId]) {
+      clearTimeout(timersRef.current[targetParticipantId]);
+    }
+    timersRef.current[targetParticipantId] = setTimeout(() => {
+      setActiveNudges((prev) => {
+        const next = { ...prev };
+        delete next[targetParticipantId];
+        return next;
+      });
+    }, 3000);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('nudge', handleNudge as EventListener);
+    return () => {
+      window.removeEventListener('nudge', handleNudge as EventListener);
+      Object.values(timersRef.current).forEach(clearTimeout);
+    };
+  }, [handleNudge]);
 
   return (
     <div className="text-center mb-6">
@@ -125,6 +172,7 @@ export const VotingProgress = memo(function VotingProgress({
             hasVoted={votedIds.has(p.id)}
             isMe={p.id === myParticipantId}
             onNudge={onNudge}
+            activeNudge={activeNudges[p.id] || null}
           />
         ))}
       </div>

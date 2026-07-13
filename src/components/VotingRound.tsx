@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useI18n } from '../hooks/useI18n';
 import { useSession } from '../hooks/useSession';
 import { CardSelector } from './CardSelector';
 import { RevealView } from './RevealView';
+import { CelebrationOverlay } from './CelebrationOverlay';
 import { Card } from './ui/Card';
 import { LeaveButton } from './LeaveButton';
 import { formatCardValue } from '../utils/cards';
@@ -45,8 +46,31 @@ export function VotingRound() {
 
   const isRevealed = session.status === 'revealed';
 
+  const numericVotes = useMemo(() => {
+    if (!isRevealed) return [];
+    return votes.filter((v) => v.value > 0).map((v) => v.value);
+  }, [isRevealed, votes]);
+
+  const isUnanimous = useMemo(() => {
+    if (numericVotes.length < 2) return false;
+    return numericVotes.every((v) => v === numericVotes[0]);
+  }, [numericVotes]);
+
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  useEffect(() => {
+    if (isRevealed && isUnanimous) {
+      setShowCelebration(true);
+      const timer = setTimeout(() => setShowCelebration(false), 5000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowCelebration(false);
+    }
+  }, [isRevealed, isUnanimous]);
+
   return (
     <div className="space-y-6 motion-safe:animate-fade-in">
+      {showCelebration && <CelebrationOverlay />}
       <Card>
         <div className="flex items-start justify-between gap-2">
           <div className="text-center flex-1">

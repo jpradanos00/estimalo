@@ -40,6 +40,7 @@ interface SessionState {
   deleteSession: () => Promise<void>;
   updateVoteWeight: (voteId: string, weight: number) => Promise<void>;
   sendNudge: (targetParticipantId: string, emoji: string) => Promise<void>;
+  transferAdmin: (targetParticipantId: string) => Promise<void>;
   reEstimate: (taskId: string, estimate: number) => Promise<void>;
   reopenTask: (taskId: string) => Promise<void>;
 }
@@ -761,6 +762,28 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     [session, myParticipant]
   );
 
+  const transferAdmin = useCallback(
+    async (targetParticipantId: string) => {
+      if (!session || !myParticipant?.is_admin) return;
+
+      await supabase
+        .from('participants')
+        .update({ is_admin: true })
+        .eq('id', targetParticipantId);
+
+      await supabase
+        .from('sessions')
+        .update({ admin_participant_id: targetParticipantId })
+        .eq('id', session.id);
+
+      await supabase
+        .from('participants')
+        .update({ is_admin: false })
+        .eq('id', myParticipant.id);
+    },
+    [session, myParticipant]
+  );
+
   const reEstimate = useCallback(
     async (taskId: string, estimate: number) => {
       await supabase.from('tasks').update({ final_estimate: estimate }).eq('id', taskId);
@@ -817,6 +840,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     deleteSession,
     updateVoteWeight,
     sendNudge,
+    transferAdmin,
     reEstimate,
     reopenTask,
   }), [
@@ -847,6 +871,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   deleteSession,
   updateVoteWeight,
   sendNudge,
+  transferAdmin,
   reEstimate,
   reopenTask,
 ]);

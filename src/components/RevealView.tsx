@@ -71,6 +71,8 @@ export function RevealView({ votes, participants, isAdmin, onRevote, onConfirm }
   );
 
   const maxDeviation = result.max - result.min;
+  const numericVotes = votes.filter((v) => v.value > 0).map((v) => v.value);
+  const isUnanimous = numericVotes.length >= 2 && numericVotes.every((v) => v === numericVotes[0]);
 
   return (
     <div className="space-y-4 motion-safe:animate-fade-in">
@@ -78,6 +80,12 @@ export function RevealView({ votes, participants, isAdmin, onRevote, onConfirm }
         <h3 className="text-lg font-bold text-slate-900 dark:text-white text-center mb-4">
           {t.reveal.title}
         </h3>
+
+        {isUnanimous && (
+          <p className="text-center text-sm font-semibold text-indigo-600 dark:text-indigo-400 mb-3 motion-safe:animate-fade-in">
+            {t.reveal.unanimous}
+          </p>
+        )}
 
         <div className="space-y-2">
           {result.votes.map(({ participant, value, weight }) => (

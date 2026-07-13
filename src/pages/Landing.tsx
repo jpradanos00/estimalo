@@ -9,6 +9,7 @@ import { AuthPage } from './AuthPage';
 import { MySessions } from './MySessions';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 import { LangToggle } from '../components/ui/LangToggle';
+import { FeedbackModal } from '../components/FeedbackModal';
 
 type LandingScreen = 'main' | 'create' | 'join' | 'auth' | 'mysessions';
 
@@ -21,6 +22,7 @@ export function Landing() {
   const [urlJoinCode, setUrlJoinCode] = useState<string | null>(null);
   const [autoJoining, setAutoJoining] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -262,6 +264,13 @@ export function Landing() {
         <div className="flex justify-center gap-2 mt-6">
           <LangToggle />
           <ThemeToggle />
+          <button
+            onClick={() => setShowFeedback(true)}
+            className="px-4 py-2 rounded-xl text-sm font-medium text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors focus-ring min-h-[44px]"
+            aria-label={t.feedback.title}
+          >
+            💡
+          </button>
         </div>
 
         <div className="mt-10 pt-6 border-t border-slate-200 dark:border-slate-700">
@@ -294,6 +303,10 @@ export function Landing() {
             </div>
           </div>
         </div>
+      )}
+
+      {showFeedback && (
+        <FeedbackModal onClose={() => setShowFeedback(false)} />
       )}
     </div>
   );

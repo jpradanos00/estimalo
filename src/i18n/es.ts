@@ -71,6 +71,8 @@ const es = {
     joinEnter: 'Entrar',
     deleteRoom: '¿Eliminar sala para siempre?',
     deleteRoomDesc: 'Se borrarán todas las tareas, votos e historias. Esta acción no se puede deshacer.',
+    transferAdmin: 'Transferir admin',
+    confirmTransferAdmin: '¿Ceder rol de admin a',
   },
   voting: {
     title: 'Elige tu estimación',
@@ -85,6 +87,7 @@ const es = {
     needInfo: 'Necesito más info',
     break: 'Pausa / café',
     nudge: 'Toca para avisar',
+    nudgedBy: 'avisado por',
     participants: 'Participantes',
   },
   reveal: {
@@ -99,6 +102,7 @@ const es = {
     discussion: 'Discutid las diferencias y re-votad si es necesario.',
     noConsensus: 'No hay consenso claro — recomendamos re-votar',
     confirmed: 'Estimación confirmada',
+    unanimous: '¡Unanimidad! 🎉',
   },
   result: {
     title: 'Resultado de la tarea',
@@ -165,6 +169,20 @@ const es = {
   footer: {
     openSource: 'Open Source',
     github: 'Ver código en GitHub',
+  },
+  feedback: {
+    title: 'Enviar sugerencia',
+    type: 'Tipo',
+    bug: 'Reportar bug',
+    feature: 'Sugerir feature',
+    description: 'Descripción',
+    descriptionPlaceholder: 'Describe el bug o la sugerencia...',
+    email: 'Tu email (opcional)',
+    emailPlaceholder: 'Para que podamos responderte',
+    send: 'Enviar',
+    sending: 'Enviando...',
+    sent: '¡Gracias! Tu mensaje ha sido enviado.',
+    error: 'Error al enviar. Inténtalo de nuevo.',
   },
 };
 

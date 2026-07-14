@@ -532,9 +532,37 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           .maybeSingle();
 
         if (sameNameAuth) {
+          if (name && name !== sameNameAuth.name) {
+            await supabase
+              .from('participants')
+              .update({ name })
+              .eq('id', sameNameAuth.id);
+            sameNameAuth.name = name;
+          }
           setSession(found);
           setMyParticipant(sameNameAuth);
           storeParticipantId(found.id, sameNameAuth.id);
+          storeSessionCode(found.code);
+          loadSessionData(found.id);
+          subscribeToSession(found.id);
+          setLoading(false);
+          return;
+        }
+      }
+
+      if (!authUser) {
+        const { data: guestParticipant } = await supabase
+          .from('participants')
+          .select('*')
+          .eq('session_id', found.id)
+          .eq('name', name)
+          .is('user_id', null)
+          .maybeSingle();
+
+        if (guestParticipant) {
+          setSession(found);
+          setMyParticipant(guestParticipant);
+          storeParticipantId(found.id, guestParticipant.id);
           storeSessionCode(found.code);
           loadSessionData(found.id);
           subscribeToSession(found.id);

@@ -333,26 +333,52 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // Reconnect on mount if there's a stored session
   useEffect(() => {
     const storedCode = getStoredSessionCode();
-    if (storedCode) {
-      setLoading(true);
-      supabase
+    if (!storedCode) return;
+
+    setLoading(true);
+
+    const reconnect = async () => {
+      const { data: sessionData, error: sessionErr } = await supabase
         .from('sessions')
         .select('*')
         .eq('code', storedCode.toUpperCase())
-        .single()
-        .then(({ data, error: err }) => {
-          if (data && !err) {
-            setSession(data);
-            loadSessionData(data.id);
-            subscribeToSession(data.id);
-            if (data.current_task_id && (data.status === 'voting' || data.status === 'revealed')) {
-              subscribeToVotes(data.current_task_id);
-            }
-          }
+        .single();
+
+      if (sessionErr || !sessionData) {
+        clearStoredSession();
+        setLoading(false);
+        return;
+      }
+
+      const storedId = getStoredParticipantId(sessionData.id);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+
+      if (storedId) {
+        const { data: participant } = await supabase
+          .from('participants')
+          .select('*')
+          .eq('id', storedId)
+          .eq('session_id', sessionData.id)
+          .single();
+
+        if (participant && authUser && participant.user_id !== authUser.id) {
+          clearStoredSession(sessionData.id);
           setLoading(false);
-        });
-    }
-  }, [loadSessionData, subscribeToSession]);
+          return;
+        }
+      }
+
+      setSession(sessionData);
+      loadSessionData(sessionData.id);
+      subscribeToSession(sessionData.id);
+      if (sessionData.current_task_id && (sessionData.status === 'voting' || sessionData.status === 'revealed')) {
+        subscribeToVotes(sessionData.current_task_id);
+      }
+      setLoading(false);
+    };
+
+    reconnect();
+  }, [loadSessionData, subscribeToSession, subscribeToVotes]);
 
   // Subscribe to votes on current task when status transitions to voting
   useEffect(() => {

@@ -59,7 +59,7 @@ const ParticipantRow = memo(function ParticipantRow({
         </div>
 
         <div className="flex items-center gap-1 flex-shrink-0">
-          {isAdmin && !participant.is_admin && (
+          {isAdmin && !participant.is_admin && participant.user_id && (
             <button
               onClick={() => onTransferAdmin(participant.id)}
               className="w-11 h-11 rounded-lg flex items-center justify-center hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors focus-ring flex-shrink-0"

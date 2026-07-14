@@ -30,10 +30,9 @@ export function VotingRound() {
   useEffect(() => {
     lastClickedRef.current = null;
     setSelected(null);
-  }, [session?.current_task_id, session?.status]);
+  }, [session?.current_task_id]);
 
   useEffect(() => {
-    if (lastClickedRef.current !== null) return;
     if (!myParticipant) {
       setSelected(null);
       return;

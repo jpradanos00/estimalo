@@ -2,6 +2,7 @@ export interface Session {
   id: string;
   code: string;
   admin_participant_id: string | null;
+  admin_id: string | null;
   name: string | null;
   status: SessionStatus;
   current_task_id: string | null;
@@ -16,6 +17,7 @@ export interface Participant {
   name: string;
   weight: number;
   is_admin: boolean;
+  user_id: string | null;
   joined_at: string;
 }
 

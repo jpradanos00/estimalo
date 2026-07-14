@@ -21,11 +21,11 @@ export function SessionRoom() {
         {isVoting ? (
           <VotingRound />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex-1 min-w-0">
               <TaskBoard />
             </div>
-            <div>
+            <div className="lg:min-w-[260px] lg:max-w-xs lg:shrink-0">
               <ParticipantList />
             </div>
           </div>

@@ -429,6 +429,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           name: adminName,
           weight: 1,
           is_admin: true,
+          user_id: user.id,
         })
         .select()
         .single();
@@ -530,6 +531,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         .maybeSingle();
 
       if (sameName) {
+        if (authUser && !sameName.user_id) {
+          await supabase
+            .from('participants')
+            .update({ user_id: authUser.id })
+            .eq('id', sameName.id);
+          sameName.user_id = authUser.id;
+        }
         setSession(found);
         setMyParticipant(sameName);
         storeParticipantId(found.id, sameName.id);
@@ -547,6 +555,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           name,
           weight: 1,
           is_admin: false,
+          user_id: authUser?.id ?? null,
         })
         .select()
         .single();
@@ -766,6 +775,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     async (targetParticipantId: string) => {
       if (!session || !myParticipant?.is_admin) return;
 
+      const target = participants.find((p) => p.id === targetParticipantId);
+      if (!target?.user_id) return;
+
       await supabase
         .from('participants')
         .update({ is_admin: true })
@@ -773,7 +785,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
       await supabase
         .from('sessions')
-        .update({ admin_participant_id: targetParticipantId })
+        .update({
+          admin_participant_id: targetParticipantId,
+          admin_id: target.user_id,
+        })
         .eq('id', session.id);
 
       await supabase
@@ -781,7 +796,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         .update({ is_admin: false })
         .eq('id', myParticipant.id);
     },
-    [session, myParticipant]
+    [session, myParticipant, participants]
   );
 
   const reEstimate = useCallback(

@@ -101,9 +101,9 @@ export function TaskBoard() {
                           : 'bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'
                       }`}
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-center gap-3">
                         {isCompleted ? (
-                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                          <svg className="w-4 h-4 text-emerald-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
                         ) : (

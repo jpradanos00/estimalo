@@ -86,10 +86,56 @@ Other Clients ← Realtime Subscription ← Supabase
 - `votes:{taskId}` — votes cast (only value broadcast, not who voted until reveal)
 
 ### Security (Row Level Security)
-- No authentication required
+- **Two identity layers**: authenticated users (Supabase Auth) and guest participants (storedId in localStorage)
+- `participants.user_id` (FK to `auth.users`) links a participant to an authenticated user — nullable for guests
+- `sessions.admin_id` (FK to `auth.users`) tracks which auth user owns the session ("My Sessions")
 - Access controlled by session code + participant ID (stored in localStorage)
 - Admin flag checked server-side for privileged operations
 - All tables have RLS policies in migration
+
+### Participant Identity & Auth Flow (CRITICAL — do not break)
+
+**Identity persistence via localStorage:**
+- `current_session_code`: 6-char code, persists across page reloads, cleared on sign out only
+- `participant_${sessionId}`: UUID of the participant, persists across page reloads and leave/rejoin cycles
+- **`leaveSession()` does NOT clear localStorage** — this allows guests to leave and rejoin with the same identity from the same device
+- **`signOut()` clears ALL** `participant_*` keys + `current_session_code` — this prevents ghost reconnects
+
+**joinSession flow order (SessionContext.tsx):**
+1. Look up session by code
+2. Get `storedId` from localStorage AND `authUser` from Supabase
+3. If `storedId` matches a participant:
+   - If `authUser && existing.user_id !== authUser.id` → mismatch (guest trying to reuse auth identity, or vice versa) → clear storedId, continue
+   - Otherwise → reconnect with that participant
+4. If `authUser === found.admin_id` → reconnect as admin participant
+5. If `authUser` and participant with matching `user_id` exists → reconnect + update name if changed
+6. Otherwise → create new participant (with `user_id` if authenticated)
+
+**Auto-reconnect on page load** (SessionContext useEffect): same validation at step 3, clears localStorage and bails out on mismatch.
+
+**Do NOT add guest name-based lookups** — they enable cross-browser/cross-device impersonation. Guest identity is device-bound via localStorage only.
+
+### Admin Transfer
+- Only available for participants with `user_id` set (authenticated users)
+- Crown button appears in `ParticipantList` only for non-admin participants with `user_id`
+- Three updates in order: `is_admin=true` on target → `admin_participant_id` + `admin_id` on session → `is_admin=false` on old admin
+- RLS policies support this sequence without changes
+
+### Feedback System
+- `FeedbackModal.tsx` calls Edge Function `send-feedback` via `supabase.functions.invoke`
+- Edge Function uses **Resend** (`onboarding@resend.dev` sender, free tier) to email feedback
+- Requires Supabase secrets: `RESEND_API_KEY` and `FEEDBACK_EMAIL`
+- CORS must allow headers: `Authorization, apikey, Content-Type, x-client-info`
+
+### Nudge System
+- Broadcast channel `nudge:{sessionId}` delivers nudge to ALL participants
+- `NudgeNotification` shows full-screen emoji + plays procedural audio **only for target**
+- `VotingProgress` listens for the same custom event and shows emoji + "nudged by X" text next to the target's avatar — visible to everyone, no sound
+
+### Unanimous Celebration
+- `VotingRound.tsx` detects all numeric votes equal on reveal → renders `CelebrationOverlay`
+- CSS-only falling emojis, auto-dismiss 5s, `z-[200]`, pointer-events-none
+- Emojis in celebration: 🎉✨🎊🚀🔥💫🥳🌟
 
 ---
 

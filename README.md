@@ -46,8 +46,11 @@ Media ponderada: 7.3h ← la que importa
 | ♿ **Accesible** | WCAG 2.1 AA, navegable con teclado, screen-reader friendly |
 | 📱 **Responsive** | Mobile-first, funciona en cualquier dispositivo |
 | 🔐 **Admin auth** | Registro con email o Google, recupera sesiones desde cualquier dispositivo |
+| 👑 **Transferir admin** | El facilitador puede ceder el rol a otro participante autenticado |
+| 🎉 **Unanimidad** | Lluvia de emojis cuando todo el equipo coincide en el voto |
+| 🔔 **Nudge** | Avisa con emojis y sonido a quien no ha votado, visible para todos |
+| 💡 **Feedback** | Botón para enviar sugerencias y bugs directamente desde la app |
 | 🆓 **Gratis** | 100% free tier: Cloudflare Pages + Supabase |
-| 🔗 **Sin registro para participantes** | Solo necesitan el código de sala |
 
 ---
 
@@ -77,6 +80,11 @@ npm install
    - `supabase/migrations/0001_grants.sql`
    - `supabase/migrations/0002_user_stories.sql`
    - `supabase/migrations/0003_auth_admin.sql`
+   - `supabase/migrations/0004_delete_session_policy.sql`
+   - `supabase/migrations/0005_participant_delete_policy.sql`
+   - `supabase/migrations/0006_vote_weight.sql`
+   - `supabase/migrations/0007_vote_delete_policy.sql`
+   - `supabase/migrations/0008_participant_user_id.sql`
 5. Ejecuta cada uno con **Run**
 
 ### Paso 3: Configura Auth (opcional pero recomendado)

@@ -6,7 +6,7 @@ const FEEDBACK_EMAIL = Deno.env.get("FEEDBACK_EMAIL");
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Authorization, apikey, Content-Type",
+  "Access-Control-Allow-Headers": "Authorization, apikey, Content-Type, x-client-info",
 };
 
 Deno.serve(async (req: Request) => {

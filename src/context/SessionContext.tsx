@@ -550,27 +550,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      if (!authUser) {
-        const { data: guestParticipant } = await supabase
-          .from('participants')
-          .select('*')
-          .eq('session_id', found.id)
-          .eq('name', name)
-          .is('user_id', null)
-          .maybeSingle();
-
-        if (guestParticipant) {
-          setSession(found);
-          setMyParticipant(guestParticipant);
-          storeParticipantId(found.id, guestParticipant.id);
-          storeSessionCode(found.code);
-          loadSessionData(found.id);
-          subscribeToSession(found.id);
-          setLoading(false);
-          return;
-        }
-      }
-
       const newPartData: Record<string, unknown> = {
         session_id: found.id,
         name,
@@ -605,15 +584,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const leaveSession = useCallback(() => {
     cleanup();
     window.history.replaceState(null, '', window.location.pathname);
-    if (session) clearStoredSession(session.id);
-    else clearStoredSession();
     setSession(null);
     setParticipants([]);
     setTasks([]);
     setUserStories([]);
     setVotes([]);
     setMyParticipant(null);
-  }, [cleanup, session]);
+  }, [cleanup]);
 
   const addTask = useCallback(async (title: string, userStoryId: string | null = null) => {
     if (!session) return;

@@ -480,6 +480,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       }
 
       const storedId = getStoredParticipantId(found.id);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+
       if (storedId) {
         const { data: existing } = await supabase
           .from('participants')
@@ -489,19 +491,29 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           .single();
 
         if (existing) {
-          setSession(found);
-          setMyParticipant(existing);
-          storeSessionCode(found.code);
-          loadSessionData(found.id);
-          subscribeToSession(found.id);
-          setLoading(false);
-          return;
+          if (authUser && !existing.user_id) {
+            await supabase
+              .from('participants')
+              .update({ user_id: authUser.id })
+              .eq('id', existing.id);
+            existing.user_id = authUser.id;
+          }
+
+          if (authUser && existing.user_id && existing.user_id !== authUser.id) {
+            localStorage.removeItem(`participant_${found.id}`);
+          } else {
+            setSession(found);
+            setMyParticipant(existing);
+            storeSessionCode(found.code);
+            loadSessionData(found.id);
+            subscribeToSession(found.id);
+            setLoading(false);
+            return;
+          }
+        } else {
+          localStorage.removeItem(`participant_${found.id}`);
         }
-
-        localStorage.removeItem(`participant_${found.id}`);
       }
-
-      const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (authUser && found.admin_id === authUser.id) {
         const { data: adminPart } = await supabase

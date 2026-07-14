@@ -523,40 +523,37 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      const { data: sameName } = await supabase
-        .from('participants')
-        .select('*')
-        .eq('session_id', found.id)
-        .eq('name', name)
-        .maybeSingle();
+      if (authUser) {
+        const { data: sameNameAuth } = await supabase
+          .from('participants')
+          .select('*')
+          .eq('session_id', found.id)
+          .eq('user_id', authUser.id)
+          .maybeSingle();
 
-      if (sameName) {
-        if (authUser && !sameName.user_id) {
-          await supabase
-            .from('participants')
-            .update({ user_id: authUser.id })
-            .eq('id', sameName.id);
-          sameName.user_id = authUser.id;
+        if (sameNameAuth) {
+          setSession(found);
+          setMyParticipant(sameNameAuth);
+          storeParticipantId(found.id, sameNameAuth.id);
+          storeSessionCode(found.code);
+          loadSessionData(found.id);
+          subscribeToSession(found.id);
+          setLoading(false);
+          return;
         }
-        setSession(found);
-        setMyParticipant(sameName);
-        storeParticipantId(found.id, sameName.id);
-        storeSessionCode(found.code);
-        loadSessionData(found.id);
-        subscribeToSession(found.id);
-        setLoading(false);
-        return;
       }
+
+      const newPartData: Record<string, unknown> = {
+        session_id: found.id,
+        name,
+        weight: 1,
+        is_admin: false,
+      };
+      if (authUser) newPartData.user_id = authUser.id;
 
       const { data: newPart, error: partErr } = await supabase
         .from('participants')
-        .insert({
-          session_id: found.id,
-          name,
-          weight: 1,
-          is_admin: false,
-          user_id: authUser?.id ?? null,
-        })
+        .insert(newPartData)
         .select()
         .single();
 

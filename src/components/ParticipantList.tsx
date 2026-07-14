@@ -33,7 +33,7 @@ const ParticipantRow = memo(function ParticipantRow({
 
   return (
     <li>
-      <div className={`flex items-start gap-3 py-2.5 px-2 rounded-xl transition-colors ${isMe ? 'bg-indigo-50/50 dark:bg-indigo-900/10 ring-1 ring-indigo-200 dark:ring-indigo-800' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}>
+      <div className={`flex items-center gap-3 py-2.5 px-2 rounded-xl transition-colors ${isMe ? 'bg-indigo-50/50 dark:bg-indigo-900/10 ring-1 ring-indigo-200 dark:ring-indigo-800' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}>
         <div
           className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
           aria-hidden="true"

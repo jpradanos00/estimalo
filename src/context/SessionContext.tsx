@@ -361,7 +361,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           .eq('session_id', sessionData.id)
           .single();
 
-        if (participant && participant.user_id && (!authUser || participant.user_id !== authUser.id)) {
+        if (participant && authUser && participant.user_id !== authUser.id) {
           clearStoredSession(sessionData.id);
           setLoading(false);
           return;
@@ -517,7 +517,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           .single();
 
         if (existing) {
-          if (existing.user_id && (!authUser || existing.user_id !== authUser.id)) {
+          if (authUser && existing.user_id !== authUser.id) {
             localStorage.removeItem(`participant_${found.id}`);
           } else {
             setSession(found);

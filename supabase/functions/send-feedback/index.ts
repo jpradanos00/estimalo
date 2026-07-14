@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "estímalo <feedback@estimalo.pages.dev>",
+        from: "estímalo <onboarding@resend.dev>",
         to: FEEDBACK_EMAIL,
         subject,
         html,

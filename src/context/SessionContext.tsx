@@ -491,15 +491,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           .single();
 
         if (existing) {
-          if (authUser && !existing.user_id) {
-            await supabase
-              .from('participants')
-              .update({ user_id: authUser.id })
-              .eq('id', existing.id);
-            existing.user_id = authUser.id;
-          }
-
-          if (authUser && existing.user_id && existing.user_id !== authUser.id) {
+          if (authUser && existing.user_id !== authUser.id) {
             localStorage.removeItem(`participant_${found.id}`);
           } else {
             setSession(found);
